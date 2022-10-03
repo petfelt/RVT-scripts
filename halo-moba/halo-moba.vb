@@ -128,8 +128,8 @@ for each player do
    global.object[1] = current_player.object[3]
    if global.object[1].number[1] == 0 and current_player.biped != no_object then
       current_player.object[0] = current_player.biped.place_at_me(hill_marker, none, never_garbage_collect, 0, 0, 3, none)
+      current_player.object[0].attach_to(current_player.biped, 0, 0, 2, relative)
       global.object[1].number[1] = 1
-      curren
    end
 end
 
@@ -187,7 +187,7 @@ for each player do
    if current_player.number[7] >= 3 then 
       global.object[0] = no_object
       global.object[0] = current_player.try_get_armor_ability()
-      global.object[1] = current_player.object[3]
+      global.object[1] = current_player.object[0]
       global.player[0] = current_player
       global.object[1].set_shape(cylinder, 35, -5, 15)
       if current_player.number[2] == 0 then 
@@ -198,11 +198,11 @@ for each player do
             global.object[1].set_waypoint_text("WARRIOR")
             for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team != global.object[1].team then 
-                  global.object[2] = current_player.object[3]
+                  global.object[2] = current_player.object[0]
                   global.object[2].set_waypoint_icon(bullseye)
-                  global.object[2].biped.set_waypoint_priority(high)
-                  global.object[2].biped.set_waypoint_visibility(enemies)
-                  global.object[2].apply_traits(script_traits[15])
+                  global.object[2].set_waypoint_priority(high)
+                  global.object[2].set_waypoint_visibility(enemies)
+                  current_player.apply_traits(script_traits[15])
                end
             end
          end
@@ -214,9 +214,9 @@ for each player do
             global.object[1].set_waypoint_text("")
             for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] then 
-                  global.object[2] = current_player.object[3]
-                  global.object[2].biped.set_waypoint_icon(none)
-                  global.object[2].biped.set_waypoint_visibility(no_one)
+                  global.object[2] = current_player.object[0]
+                  global.object[2].set_waypoint_icon(none)
+                  global.object[2].set_waypoint_visibility(no_one)
                end
             end
          end
@@ -234,7 +234,7 @@ for each player do
             global.number[10] %= 2
             for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team == global.object[1].team and current_player.number[2] != 1 then 
-                  global.object[1] = current_player.object[3]
+                  global.object[1] = current_player.object[0]
                   global.number[7] = global.object[1].number[0]
                   global.object[1] = global.player[0].biped
                   if global.number[7] <= 0 and global.number[10] == 0 then 
@@ -263,7 +263,7 @@ for each player do
             global.number[10] %= 2
             for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team != global.object[1].team then 
-                  global.object[1] = current_player.object[3]
+                  global.object[1] = current_player.object[0]
                   global.number[7] = global.object[1].number[0]
                   global.object[1] = global.player[0].biped
                   global.number[11] = current_player.biped.shields
@@ -481,11 +481,9 @@ end
 on object death: do
    for each player do
       if current_object == current_player.biped then
-         current_player.biped.set_waypoint_icon(none)
-         current_player.biped.set_waypoint_priority(normal)
-         current_player.biped.set_waypoint_visibility(no_one)
-         current_player.biped.set_shape_visibility(no_one)
-         current_player.biped.set_shape(cylinder, 0, 0, 0)
+         global.object[1] = current_player.object[0]
+         global.object[1].detach()
+         global.object[1].delete()
       end
    end
 end
