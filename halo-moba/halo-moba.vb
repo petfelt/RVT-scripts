@@ -213,7 +213,7 @@ for each player do
             global.number[10] = game.round_timer
             global.number[10] %= 2
             for each player do
-               if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team == global.object[1].team then 
+               if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team == global.object[1].team and current_player.number[2] != 1 then 
                   global.object[1] = current_player.object[3]
                   global.number[7] = global.object[1].number[0]
                   global.object[1] = global.player[0].biped
@@ -228,6 +228,40 @@ for each player do
             end
          end
          if current_player.timer[3].is_zero() then 
+            global.object[1].set_shape_visibility(no_one)
+            global.object[1].set_waypoint_priority(normal)
+            global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_text("")
+         end
+      end
+      if current_player.number[2] == 2 then 
+         if global.object[0].is_in_use() then 
+            global.object[1].set_shape_visibility(everyone)
+            global.object[1].set_waypoint_priority(blink)
+            global.object[1].set_waypoint_visibility(everyone)
+            global.object[1].set_waypoint_text("BESERKER")
+            global.number[10] = game.round_timer
+            global.number[10] %= 2
+            for each player do
+               if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team != global.object[1].team then 
+                  global.object[1] = current_player.object[3]
+                  global.number[7] = global.object[1].number[0]
+                  global.object[1] = global.player[0].biped
+                  if global.number[7] <= 0 and global.number[10] == 0 then 
+                     if current_player.biped.shields >= 50 then
+                        current_player.biped.shields -= 15
+                     global.number[7] = 1
+                  end
+                  if global.number[7] >= 1 and global.number[10] != 0 then 
+                     if current_player.biped.shields >= 50 then
+                        current_player.biped.shields -= 15
+                     end
+                     global.number[7] = 0
+                  end
+               end
+            end
+         end
+         if not global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(no_one)
             global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
