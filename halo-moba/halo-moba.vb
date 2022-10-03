@@ -167,6 +167,8 @@ for each player do
          current_player.number[0] = 0
       end
    end
+   if current_player.number[7] >= 2 then
+   end
    if current_player.number[7] >= 3 then 
       global.object[1] = current_player.biped
       global.player[0] = current_player
@@ -247,13 +249,15 @@ for each player do
                   global.object[1] = current_player.object[3]
                   global.number[7] = global.object[1].number[0]
                   global.object[1] = global.player[0].biped
+                  global.number[11] = current_player.biped.shields
                   if global.number[7] <= 0 and global.number[10] == 0 then 
-                     if current_player.biped.shields >= 50 then
+                     if global.number[11] >= 50 then
                         current_player.biped.shields -= 15
+                     end
                      global.number[7] = 1
                   end
                   if global.number[7] >= 1 and global.number[10] != 0 then 
-                     if current_player.biped.shields >= 50 then
+                     if global.number[11] >= 50 then
                         current_player.biped.shields -= 15
                      end
                      global.number[7] = 0
