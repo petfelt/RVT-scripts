@@ -46,6 +46,7 @@ declare object.object[0] with network priority low
 declare object.player[0] with network priority low
 declare object.timer[0] = 120
 declare object.timer[1] = 5
+declare object.timer[2] = 2
 
 if global.number[6] == -600 then 
    global.number[4] = script_option[1]
@@ -127,8 +128,6 @@ for each player do
 end
 
 for each player do
-   global.object[0] = no_object
-   global.object[0] = current_player.try_get_armor_ability()
    if current_player.number[0] == 4 then 
       if current_player.number[7] >= 1 and current_player.object[1] == no_object and current_player.timer[1].is_zero() then 
          current_player.object[1] = current_player.biped.place_at_me(monitor, none, none, 0, 0, 0, none)
@@ -163,13 +162,25 @@ for each player do
          current_player.number[0] = 0
       end
       if current_player.number[7] >= 2 and current_player.object[1] != no_object and current_player.timer[1].is_zero() then 
+         global.object[0] = current_player.object[1].place_at_me(fusion_coil, "fusion_coil", none, 5, 0, 5, none)
+         global.object[1] = current_player.object[1].place_at_me(fusion_coil, "fusion_coil", none, -5, 0, 5, none)
+         global.object[2] = current_player.object[1].place_at_me(fusion_coil, "fusion_coil", none, 0, 5, 5, none)
+         global.object[3] = current_player.object[1].place_at_me(fusion_coil, "fusion_coil", none, 0, -5, 5, none)
+         global.object[0].timer[2].reset()
+         global.object[0].timer[2].set_rate(-100%)
+         global.object[1].timer[2].reset()
+         global.object[1].timer[2].set_rate(-100%)
+         global.object[2].timer[2].reset()
+         global.object[2].timer[2].set_rate(-100%)
+         global.object[3].timer[2].reset()
+         global.object[3].timer[2].set_rate(-100%)
          current_player.timer[1].reset()
          current_player.number[0] = 0
       end
    end
-   if current_player.number[7] >= 2 then
-   end
    if current_player.number[7] >= 3 then 
+      global.object[0] = no_object
+      global.object[0] = current_player.try_get_armor_ability()
       global.object[1] = current_player.biped
       global.player[0] = current_player
       global.object[1].set_shape(cylinder, 35, 5, 5)
@@ -272,6 +283,12 @@ for each player do
             global.object[1].set_waypoint_text("")
          end
       end
+   end
+end
+
+for each object with label "fusion_coil" do
+   if current_object.timer[2].is_zero() then
+      current_object.kill(false)
    end
 end
 
