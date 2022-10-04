@@ -187,13 +187,11 @@ for each player do
       if current_player.number[2] == 0 then 
          if global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(everyone)
-            global.object[1].set_waypoint_priority(blink)
             global.object[1].set_waypoint_visibility(everyone)
             global.object[1].set_waypoint_text("WARRIOR")
             for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team != global.object[1].team then 
                   current_player.biped.set_waypoint_icon(bullseye)
-                  current_player.biped.set_waypoint_priority(high)
                   current_player.biped.set_waypoint_visibility(enemies)
                   current_player.apply_traits(script_traits[15])
                end
@@ -201,7 +199,6 @@ for each player do
          end
          if not global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(no_one)
-            global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
             global.object[1].set_waypoint_icon(none)
             global.object[1].set_waypoint_text("")
@@ -209,7 +206,6 @@ for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] then 
                   current_player.biped.set_waypoint_icon(none)
                   current_player.biped.set_waypoint_visibility(allies)
-                  current_player.biped.set_waypoint_priority(normal)
                end
             end
          end
@@ -220,7 +216,6 @@ for each player do
          end
          if not current_player.timer[3].is_zero() then 
             global.object[1].set_shape_visibility(everyone)
-            global.object[1].set_waypoint_priority(blink)
             global.object[1].set_waypoint_visibility(everyone)
             global.object[1].set_waypoint_text("MEDIC")
             global.number[10] = game.round_timer
@@ -242,7 +237,6 @@ for each player do
          end
          if current_player.timer[3].is_zero() then 
             global.object[1].set_shape_visibility(no_one)
-            global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
             global.object[1].set_waypoint_text("")
          end
@@ -250,7 +244,6 @@ for each player do
       if current_player.number[2] == 2 then 
          if global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(everyone)
-            global.object[1].set_waypoint_priority(blink)
             global.object[1].set_waypoint_visibility(everyone)
             global.object[1].set_waypoint_text("BESERKER")
             global.number[10] = game.round_timer
@@ -278,7 +271,6 @@ for each player do
          end
          if not global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(no_one)
-            global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
             global.object[1].set_waypoint_text("")
          end
@@ -343,12 +335,18 @@ for each player do
          end
          global.player[0].score += global.number[2]
       end
+      if current_player.object[0] == current_player.biped then
+         game.show_message_to(current_player, none, "Halo MOBA")
+         current_player.biped.set_shape(cylinder, 0, 0, 0)
+         current_player.biped.set_shape_visibility(no_one)
+         current_player.biped.set_waypoint_visibility(no_one)
+      end
    end
 end
 
 for each player do
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) and not current_player.killer_type_is(kill) and not current_player.killer_type_is(betrayal) then 
-      current_player.score -= 50
+      current_player.score -= 5
    end
 end
 
