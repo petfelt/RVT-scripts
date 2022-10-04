@@ -123,9 +123,6 @@ for each player do
       script_widget[1].set_visibility(current_player, true)
       script_widget[3].set_visibility(current_player, true)
       current_player.score += 5000
-      current_player.timer[2] = 1
-      current_player.timer[2].reset()
-      current_player.timer[2].set_rate(-100%)
       current_player.number[1] = 1
    end
 end
@@ -151,6 +148,8 @@ for each player do
          global.object[1].timer[0].set_rate(-100%)
          current_object.number[1] = 0
          global.object[1].set_waypoint_text("WARD")
+         current_player.timer[2].reset()
+         current_player.timer[2].set_rate(-100%)
          if global.object[1].is_out_of_bounds() then 
             game.show_message_to(current_player, none, "Wards cannot be placed out of bounds.")
             global.object[1].delete()
@@ -187,18 +186,26 @@ for each player do
       global.object[1].set_shape(cylinder, 35, 5, 5)
       if current_player.number[2] == 0 then 
          if global.object[0].is_in_use() then 
-            global.player[0].timer[2].reset()
-            global.player[0].timer[2].set_rate(-100%)
             global.object[1].set_shape_visibility(everyone)
             global.object[1].set_waypoint_visibility(everyone)
             global.object[1].set_waypoint_text("WARRIOR")
             for each player do
                if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team != global.object[1].team then 
-                  current_player.timer[2].reset()
-                  current_player.timer[2].set_rate(-100%)
                   current_player.biped.set_waypoint_icon(bullseye)
-                  current_player.biped.set_waypoint_visibility(everyone)
+                  current_player.biped.set_waypoint_visibility(enemies)
                   current_player.apply_traits(script_traits[15])
+               end
+            end
+         end
+         if not global.object[0].is_in_use() then 
+            global.object[1].set_shape_visibility(no_one)
+            global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_icon(none)
+            global.object[1].set_waypoint_text("")
+            for each player do
+               if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] then 
+                  current_player.biped.set_waypoint_icon(none)
+                  current_player.biped.set_waypoint_visibility(allies)
                end
             end
          end
@@ -207,9 +214,7 @@ for each player do
          if global.object[0].is_in_use() then 
             current_player.timer[3].reset()
          end
-         if not current_player.timer[3].is_zero() and current_player.number[1] != 0 then 
-            global.player[0].timer[2].reset()
-            global.player[0].timer[2].set_rate(-100%)
+         if not current_player.timer[3].is_zero() then 
             global.object[1].set_shape_visibility(everyone)
             global.object[1].set_waypoint_visibility(everyone)
             global.object[1].set_waypoint_text("MEDIC")
@@ -230,11 +235,14 @@ for each player do
                end
             end
          end
+         if current_player.timer[3].is_zero() then 
+            global.object[1].set_shape_visibility(no_one)
+            global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_text("")
+         end
       end
       if current_player.number[2] == 2 then 
          if global.object[0].is_in_use() then 
-            global.player[0].timer[2].reset()
-            global.player[0].timer[2].set_rate(-100%)
             global.object[1].set_shape_visibility(everyone)
             global.object[1].set_waypoint_visibility(everyone)
             global.object[1].set_waypoint_text("BESERKER")
@@ -261,32 +269,18 @@ for each player do
                end
             end
          end
+         if not global.object[0].is_in_use() then 
+            global.object[1].set_shape_visibility(no_one)
+            global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_text("")
+         end
       end
-   end
-end
-
-for each player do
-   global.number[10] = game.round_timer
-   global.number[10] %= 2
-   if global.number[10] == 0 then 
-      script_widget[0].set_text("Dmg: %n/3 Def: %n/2", hud_player.number[3], hud_player.number[4])
-      script_widget[1].set_text("%n Spec: %n/3", game.round_timer, hud_player.number[7])
    end
 end
 
 for each object with label "fusion_coil" do
    if current_object.timer[2].is_zero() then
       current_object.kill(false)
-   end
-end
-
-for each player do
-   if current_player.timer[2].is_zero() and current_player.number[1] != 0 then
-      current_player.biped.set_shape_visibility(no_one)
-      current_player.biped.set_waypoint_icon(none)
-      current_player.biped.set_waypoint_priority(normal)
-      current_player.biped.set_waypoint_visibility(allies)
-      current_player.biped.set_waypoint_text("")
    end
 end
 
@@ -304,8 +298,18 @@ for each player do
 end
 
 for each player do
+   global.number[10] = game.round_timer
+   global.number[10] %= 2
+   if global.number[10] == 0 then 
+      script_widget[0].set_text("Dmg: %n/3 Def: %n/2", hud_player.number[3], hud_player.number[4])
+      script_widget[1].set_text("%n Spec: %n/3", game.round_timer, hud_player.number[7])
+   end
+end
+
+for each player do
+   global.number[1] = 0
    global.object[0] = current_player.biped
-   if global.object[0] != no_object then
+   if global.object[0] != no_object then 
       current_player.object[0] = global.object[0]
    end
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
@@ -331,11 +335,11 @@ for each player do
          end
          global.player[0].score += global.number[2]
       end
-      if current_player.object[0] != no_object then
+      if current_player.object[0] == current_player.biped then
          game.show_message_to(current_player, none, "Halo MOBA")
-         global.object[0].set_shape(cylinder, 0, 0, 0)
-         global.object[0].set_shape_visibility(no_one)
-         global.object[0].set_waypoint_visibility(no_one)
+         current_player.biped.set_shape(cylinder, 0, 0, 0)
+         current_player.biped.set_shape_visibility(no_one)
+         current_player.biped.set_waypoint_visibility(no_one)
       end
    end
 end
@@ -442,6 +446,7 @@ end
 
 for each player do
    global.object[1] = current_player.object[1]
+   global.object[2] = current_player.object[2]
    for each player do
       if global.object[1] != no_object then 
          if current_player != global.object[1].player[0] then 
@@ -466,6 +471,14 @@ for each player do
             global.object[1].kill(false)
          end
       end
+   end
+end
+
+on object death: do
+   for each player do
+      current_player.biped.set_waypoint_icon(none)
+      current_player.biped.set_waypoint_priority(normal)
+      current_player.biped.set_waypoint_visibility(allies)
    end
 end
 
@@ -1196,16 +1209,10 @@ for each object with label "HM_Help" do
    current_object.set_shape_visibility(allies)
    current_object.set_waypoint_text("NEED HELP?")
    for each player do
-      global.object[1] = current_player.object[3]
       if current_object.shape_contains(current_player.biped) and current_object.team == current_player.team then 
          current_player.set_round_card_text("NEED HELP?")
          current_player.set_round_card_icon(health_pack)
-         if global.object[1].number[1] == 0 and current_player.number[1] != 0 then
-            current_player.timer[2] = 5
-            current_player.timer[2].reset()
-            game.show_message_to(current_player, none, "Halo MOBA")
-            global.object[1].number[1] = 1
-         end
+         current_player.timer[2].set_rate(-100%)
          if current_player.timer[2].is_zero() then 
             if current_player.number[6] == -14 then 
                current_player.number[6] = -1
@@ -1279,14 +1286,6 @@ for each object with label "HM_Help" do
             current_player.timer[2].reset()
          end
       end
-      if global.object[1].number[1] == 1 and current_player.timer[2].is_zero() then
-         current_player.timer[2] = 1
-         current_player.timer[2].reset()
-         current_player.timer[2].set_rate(-100%)
-         game.show_message_to(current_player, none, "RATING")
-         global.object[1].number[1] = 0
-      end
-      current_player.timer[2].set_rate(-100%)
    end
 end
 
