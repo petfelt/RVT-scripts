@@ -203,6 +203,7 @@ for each player do
             global.object[1].set_shape_visibility(no_one)
             global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_visibility(mod_player, current_player, 0)
             global.object[1].set_waypoint_icon(none)
             global.object[1].set_waypoint_text("")
             for each player do
@@ -244,6 +245,7 @@ for each player do
             global.object[1].set_shape_visibility(no_one)
             global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_visibility(mod_player, current_player, 0)
             global.object[1].set_waypoint_text("")
          end
       end
@@ -280,6 +282,7 @@ for each player do
             global.object[1].set_shape_visibility(no_one)
             global.object[1].set_waypoint_priority(normal)
             global.object[1].set_waypoint_visibility(allies)
+            global.object[1].set_waypoint_visibility(mod_player, current_player, 0)
             global.object[1].set_waypoint_text("")
          end
       end
@@ -289,7 +292,6 @@ end
 for each object with label "fusion_coil" do
    if current_object.timer[2].is_zero() then
       current_object.kill(false)
-      current_object.delete()
    end
 end
 
@@ -1408,9 +1410,7 @@ for each object with label "HM_Shop" do
 end
 
 on object death: do
-   game.show_message_to(all_players, none, "slayer")
-   if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) then
-      game.show_message_to(all_players, none, "RATING")
+   if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) or killed_object.is_of_type(monitor) then
       killed_object.set_waypoint_icon(none)
       killed_object.set_waypoint_priority(normal)
       killed_object.set_waypoint_text("")
