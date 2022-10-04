@@ -289,6 +289,7 @@ end
 for each object with label "fusion_coil" do
    if current_object.timer[2].is_zero() then
       current_object.kill(false)
+      current_object.delete()
    end
 end
 
@@ -473,14 +474,6 @@ for each player do
             global.object[1].kill(false)
          end
       end
-   end
-end
-
-on object death: do
-   for each player do
-      current_player.biped.set_waypoint_icon(none)
-      current_player.biped.set_waypoint_priority(normal)
-      current_player.biped.set_waypoint_visibility(allies)
    end
 end
 
@@ -1411,5 +1404,26 @@ for each object with label "HM_Shop" do
          end
          current_player.timer[1].reset()
       end
+   end
+end
+
+on object death: do
+   game.show_message_to(all_players, none, "slayer")
+   if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) then
+      game.show_message_to(all_players, none, "RATING")
+      killed_object.set_waypoint_icon(none)
+      killed_object.set_waypoint_priority(normal)
+      killed_object.set_waypoint_text("")
+      killed_object.set_waypoint_visibility(no_one)
+      for each player do
+         if killed_object.shape_contains(current_player.biped) then
+            current_player.biped.set_waypoint_icon(none)
+            current_player.biped.set_waypoint_priority(normal)
+            current_player.biped.set_waypoint_visibility(allies)
+            current_player.biped.set_waypoint_text("")
+         end
+      end
+      killed_object.set_shape(cylinder, 0, 0, 0)
+      killed_object.set_shape_visibility(no_one)
    end
 end
