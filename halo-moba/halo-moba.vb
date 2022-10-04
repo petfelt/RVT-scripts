@@ -189,7 +189,7 @@ for each player do
       global.object[0] = current_player.try_get_armor_ability()
       global.object[1] = current_player.object[0]
       global.player[0] = current_player
-      global.object[1].set_shape(cylinder, 35, 5, 5)
+      global.object[1].set_shape(cylinder, 35, -5, 15)
       if current_player.number[2] == 0 then 
          if global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(everyone)
@@ -484,8 +484,6 @@ on object death: do
          global.object[1] = current_player.object[0]
          global.object[1].detach()
          global.object[1].delete()
-         global.object[1] = current_player.object[3]
-         global.object[1].number[1] = 0
       end
    end
 end
