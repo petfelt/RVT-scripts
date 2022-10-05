@@ -30,6 +30,7 @@ declare player.object[0] with network priority low
 declare player.object[1] with network priority low
 declare player.object[2] with network priority low
 declare player.object[3] with network priority local
+declare player.player[0] with network priority local
 declare player.timer[0] = 2
 declare player.timer[1] = 3
 declare player.timer[2] = 5
@@ -122,7 +123,6 @@ for each player do
       current_player.set_fireteam(0)
       script_widget[0].set_visibility(current_player, true)
       script_widget[1].set_visibility(current_player, true)
-      script_widget[3].set_visibility(current_player, true)
       current_player.score += 5000
       current_player.number[1] = 1
    end
@@ -291,7 +291,7 @@ for each player do
          global.object[1] = current_player.object[3]
          if not global.object[0].is_in_use() then
             if global.object[1].number[1] == 1 then
-               global.object[1].object[1] = current_player.biped.place_at_me(light_yellow_flashing, "PORTAL", never_garbage_collect, 0, 0, 0, none)
+               global.object[1].object[1] = current_player.biped.place_at_me(light_yellow_flashing, "PORTAL", never_garbage_collect, 0, 0, 1, none)
                global.object[2] = global.object[1].object[0]
                global.object[2].object[0] = global.object[1].object[1]
                global.object[2].set_waypoint_text("PORTAL")
@@ -299,8 +299,8 @@ for each player do
                global.object[2].set_waypoint_visibility(everyone)
                global.object[2].timer[0].reset()
                global.object[2].timer[0].set_rate(-100%)
-               global.object[2].timer[1].reset()
-               global.object[2].timer[1].set_rate(-100%)
+               global.object[2].timer[2].reset()
+               global.object[2].timer[2].set_rate(-100%)
                global.object[2] = global.object[1].object[1]
                global.object[2].object[0] = global.object[1].object[0]
                global.object[2].set_waypoint_text("PORTAL")
@@ -308,18 +308,23 @@ for each player do
                global.object[2].set_waypoint_visibility(everyone)
                global.object[2].timer[0].reset()
                global.object[2].timer[0].set_rate(-100%)
-               global.object[2].timer[1].reset()
-               global.object[2].timer[1].set_rate(-100%)
+               global.object[2].timer[2].reset()
+               global.object[2].timer[2].set_rate(-100%)
                global.object[2] = global.object[1].object[1]
-               global.object[2].set_shape(cylinder, 4, 3, 0)
+               global.object[2].player[0] = current_player
+               global.object[2].object[1] = current_player.biped.place_at_me(flag_stand, none, never_garbage_collect, 0, 0, 1, none)
+               global.object[2].object[1].set_scale(1)
+               global.object[2].attach_to(global.object[2].object[1], 0, 0, 0, relative)
+               global.object[2].set_shape(cylinder, 3, 2, 2)
                global.object[2].set_shape_visibility(everyone)
                global.object[1].number[1] = 0
-               game.show_message_to(current_player, none, "Halo MOBA")
+               game.show_message_to(current_player, none, "Ending portal placed.")
             end
             global.object[1].set_waypoint_text("")
          end
          if global.object[0].is_in_use() then
             if global.object[1].object[1] != no_object then
+               game.show_message_to(current_player, none, "Old portals deleted.")
                global.object[2] = global.object[1].object[0]
                global.object[2].delete()
                global.object[2] = global.object[1].object[1]
@@ -328,10 +333,14 @@ for each player do
             if global.object[1].number[1] == 0 then
                global.object[1].object[0] = current_player.biped.place_at_me(light_yellow_flashing, "PORTAL", never_garbage_collect, 0, 0, 1, none)
                global.object[2] = global.object[1].object[0]
-               global.object[2].set_shape(cylinder, 4, 3, 0)
+               global.object[2].player[0] = current_player
+               global.object[2].object[1] = current_player.biped.place_at_me(flag_stand, none, never_garbage_collect, 0, 0, 1, none)
+               global.object[2].object[1].set_scale(1)
+               global.object[2].attach_to(global.object[2].object[1], 0, 0, 0, relative)
+               global.object[2].set_shape(cylinder, 3, 2, 2)
                global.object[2].set_shape_visibility(everyone)
-               game.show_message_to(current_player, none, "slayer")
                global.object[1].number[1] = 1
+               game.show_message_to(current_player, none, "Starting portal placed.")
             end
 
             global.object[1].set_waypoint_text("RECON")
@@ -348,20 +357,27 @@ for each object with label "fusion_coil" do
 end
 
 for each object with label "PORTAL" do
-   if current_object.timer[0].is_zero() then
+   global.player[0] = current_object.player[0]
+   if current_object.timer[0].is_zero() or global.player[0].number[2] != 3 then
+      global.object[2] = current_object.object[0]
+      global.object[2].object[1].delete()
+      global.object[2].delete()
+      current_object.object[1].delete()
       current_object.delete()
-      current_object.object[0].delete()
+      game.show_message_to(global.player[0], none, "Your portals have dissipated.")
    end
-   if current_object.timer[1].is_zero() then
-      for each player do
-         if current_object.shape_contains(current_player.biped) then
-            current_object.timer[1].reset()
-            current_object.timer[1].set_rate(-100%)
+
+   for each player do
+      if current_object.shape_contains(current_player.biped) then
+         if current_object.timer[2].is_zero() then
             global.object[1] = current_object.object[0]
-            script_widget[1].set_meter_params(timer, hud_target_object.timer[1])
-            script_widget[1].set_visibility(current_player)
+            current_object.timer[2].reset()
+            current_object.timer[2].set_rate(-100%)
+            global.object[1].timer[2].reset()
+            global.object[1].timer[2].set_rate(-100%)
             current_player.biped.attach_to(global.object[1], 0, 0, 5, relative)
             current_player.biped.detach()
+            send_incident(teleporter_used, current_player, current_player)
          end
       end
    end
@@ -417,6 +433,17 @@ for each player do
             global.number[2] = 10
          end
          global.player[0].score += global.number[2]
+      end
+      if current_player.number[2] == 3 then
+         global.object[1] = current_player.object[3]
+         global.object[1] = global.object[1].object[0]
+         global.object[2] = current_player.object[3]
+         global.object[2] = global.object[2].object[1]
+         global.object[1].object[1].delete()
+         global.object[1].delete()
+         global.object[2].object[1].delete()
+         global.object[2].delete()
+         game.show_message_to(current_player, none, "Your portals have dissipated.")
       end
    end
 end
