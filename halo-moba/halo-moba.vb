@@ -31,6 +31,7 @@ declare player.object[1] with network priority low
 declare player.object[2] with network priority low
 declare player.object[3] with network priority local
 declare player.player[0] with network priority local
+declare player.team[0] with network priority local
 declare player.timer[0] = 2
 declare player.timer[1] = 3
 declare player.timer[2] = 5
@@ -119,12 +120,76 @@ for each player do
    end
    if current_player.number[1] == 0 and current_player.timer[2].is_zero() then 
       current_player.object[3] = global.object[3].place_at_me(capture_plate, none, never_garbage_collect, 0, 0, 0, none)
+      global.object[1] = global.object[3].place_between_me_and(global.object[3], sound_emitter_alarm_2, 0)
+      global.object[1].face_toward(global.object[1], 0, 1, 0)
+      for each object with label "HM_Flatten_Wall" do
+         if current_object.spawn_sequence == 0 then
+            current_object.copy_rotation_from(global.object[1], true)
+         end
+      end
+      global.object[1].delete()
       game.show_message_to(current_player, inv_spire_vo_spartan_p1_intro, "Halo MOBA\nRemember to jungle!\nCreated by mini nt")
       current_player.set_fireteam(0)
       script_widget[0].set_visibility(current_player, true)
       script_widget[1].set_visibility(current_player, true)
       current_player.score += 5000
       current_player.number[1] = 1
+   end
+end
+
+for each player do
+   if current_player.number[2] == 0 then 
+      current_player.apply_traits(script_traits[4])
+      if current_player.number[3] == 1 then 
+         current_player.apply_traits(script_traits[6])
+      end
+      if current_player.number[3] == 2 then 
+         current_player.apply_traits(script_traits[7])
+      end
+      if current_player.number[3] >= 3 then 
+         current_player.apply_traits(script_traits[8])
+      end
+      if current_player.number[4] == 1 then 
+         current_player.apply_traits(script_traits[0])
+      end
+      if current_player.number[4] >= 2 then 
+         current_player.apply_traits(script_traits[1])
+      end
+   end
+   if current_player.number[2] == 1 then 
+      if current_player.number[3] == 1 then 
+         current_player.apply_traits(script_traits[12])
+      end
+      if current_player.number[3] == 2 then 
+         current_player.apply_traits(script_traits[13])
+      end
+      if current_player.number[3] >= 3 then 
+         current_player.apply_traits(script_traits[14])
+      end
+      if current_player.number[4] == 1 then 
+         current_player.apply_traits(script_traits[2])
+      end
+      if current_player.number[4] >= 2 then 
+         current_player.apply_traits(script_traits[3])
+      end
+   end
+   if current_player.number[2] >= 2 then 
+      current_player.apply_traits(script_traits[5])
+      if current_player.number[3] == 1 then 
+         current_player.apply_traits(script_traits[9])
+      end
+      if current_player.number[3] == 2 then 
+         current_player.apply_traits(script_traits[10])
+      end
+      if current_player.number[3] >= 3 then 
+         current_player.apply_traits(script_traits[11])
+      end
+      if current_player.number[4] == 1 then 
+         current_player.apply_traits(script_traits[2])
+      end
+      if current_player.number[4] >= 2 then 
+         current_player.apply_traits(script_traits[3])
+      end
    end
 end
 
@@ -216,28 +281,38 @@ for each player do
             end
          end
       end
-      if current_player.number[2] == 1 then 
+      if current_player.number[2] == 2 then 
+         global.object[2] = current_player.object[3]
          if global.object[0].is_in_use() then 
             current_player.timer[3].reset()
+            global.object[2].timer[2].set_rate(-500%)
+            global.object[2].number[2] = 0
+            if global.object[2].timer[2].is_zero() then
+               global.object[2].number[2] = 1
+            end
          end
-         if not current_player.timer[3].is_zero() then 
-            global.object[1].set_shape_visibility(everyone)
-            global.object[1].set_waypoint_priority(blink)
-            global.object[1].set_waypoint_visibility(everyone)
-            global.object[1].set_waypoint_text("MEDIC")
-            global.number[10] = game.round_timer
-            global.number[10] %= 2
-            for each player do
-               if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team == global.object[1].team and current_player.number[2] != 1 then 
-                  global.object[1] = current_player.object[3]
-                  global.number[7] = global.object[1].number[0]
-                  global.object[1] = global.player[0].biped
-                  if global.number[7] <= 0 and global.number[10] == 0 then 
-                     current_player.biped.shields += 15
-                     global.number[7] = 1
-                  end
-                  if global.number[7] >= 1 and global.number[10] != 0 then 
-                     global.number[7] = 0
+         if not current_player.timer[3].is_zero() and not global.object[0].is_in_use() then 
+            global.object[2].timer[2].reset()
+            if global.object[2].number[2] == 1 then
+               global.object[1].set_shape_visibility(everyone)
+               global.object[1].set_waypoint_priority(normal)
+               global.object[1].set_waypoint_visibility(everyone)
+               global.object[1].set_waypoint_visibility(mod_player, current_player, 0)
+               global.object[1].set_waypoint_text("MEDIC")
+               global.number[10] = game.round_timer
+               global.number[10] %= 2
+               for each player do
+                  if global.object[1].shape_contains(current_player.biped) and current_player != global.player[0] and current_player.team == global.object[1].team and current_player.number[2] != 2 then 
+                     global.object[1] = current_player.object[3]
+                     global.number[7] = global.object[1].number[0]
+                     global.object[1] = global.player[0].biped
+                     if global.number[7] <= 0 and global.number[10] == 0 then 
+                        current_player.biped.shields += 15
+                        global.number[7] = 1
+                     end
+                     if global.number[7] >= 1 and global.number[10] != 0 then 
+                        global.number[7] = 0
+                     end
                   end
                end
             end
@@ -250,11 +325,12 @@ for each player do
             global.object[1].set_waypoint_text("")
          end
       end
-      if current_player.number[2] == 2 then 
+      if current_player.number[2] == 1 then 
          if global.object[0].is_in_use() then 
             global.object[1].set_shape_visibility(everyone)
             global.object[1].set_waypoint_priority(blink)
             global.object[1].set_waypoint_visibility(everyone)
+            global.object[1].set_waypoint_visibility(mod_player, current_player, 0)
             global.object[1].set_waypoint_text("BESERKER")
             global.number[10] = game.round_timer
             global.number[10] %= 2
@@ -353,6 +429,29 @@ end
 for each object with label "fusion_coil" do
    if current_object.timer[2].is_zero() then
       current_object.kill(false)
+   end
+end
+
+for each player do
+   global.object[2] = no_object
+   global.object[2] = current_player.try_get_armor_ability()
+   if global.object[2].is_of_type(drop_shield) then
+      if not global.object[2].is_in_use() and global.object[2].number[3] < 3 then
+         global.object[2].number[3] += 1
+         for each object do
+            global.number[7] = current_object.get_distance_to(global.object[2])
+            global.number[10] = 0
+            global.number[10] = current_object.shields
+            if global.number[7] < 6 and not current_object.is_of_type(spartan) and not current_object.is_of_type(elite) and not current_object.is_of_type(monitor) and not current_object.is_of_type(drop_shield) and not current_object.is_of_type(sabre) and global.number[10] > 97 then 
+               current_object.max_shields = 85
+               current_object.shields = 85
+               global.number[10] = current_object.shields
+            end
+         end
+      end
+      if global.object[2].is_in_use() then
+         global.object[2].number[3] = 0
+      end
    end
 end
 
@@ -483,72 +582,19 @@ for each player do
    if global.object[0].is_of_type(armor_lock) then 
       current_player.set_fireteam(0)
    end
-   if global.object[0].is_of_type(drop_shield) then 
+   if global.object[0].is_of_type(sprint) then 
       current_player.set_fireteam(1)
    end
-   if global.object[0].is_of_type(sprint) then 
+   if global.object[0].is_of_type(drop_shield) then 
       current_player.set_fireteam(2)
    end
    if global.object[0].is_of_type(active_camo_aa) then
       current_player.set_fireteam(3)
    end
+   if global.object[0].is_of_type(evade) then
+      current_player.set_fireteam(4)
+   end
    current_player.number[2] = current_player.get_fireteam()
-end
-
-for each player do
-   if current_player.number[2] == 0 then 
-      current_player.apply_traits(script_traits[4])
-      if current_player.number[3] == 1 then 
-         current_player.apply_traits(script_traits[6])
-      end
-      if current_player.number[3] == 2 then 
-         current_player.apply_traits(script_traits[7])
-      end
-      if current_player.number[3] >= 3 then 
-         current_player.apply_traits(script_traits[8])
-      end
-      if current_player.number[4] == 1 then 
-         current_player.apply_traits(script_traits[0])
-      end
-      if current_player.number[4] >= 2 then 
-         current_player.apply_traits(script_traits[1])
-      end
-   end
-   if current_player.number[2] == 1 or current_player.number[2] == 3 then 
-      current_player.apply_traits(script_traits[5])
-      if current_player.number[3] == 1 then 
-         current_player.apply_traits(script_traits[9])
-      end
-      if current_player.number[3] == 2 then 
-         current_player.apply_traits(script_traits[10])
-      end
-      if current_player.number[3] >= 3 then 
-         current_player.apply_traits(script_traits[11])
-      end
-      if current_player.number[4] == 1 then 
-         current_player.apply_traits(script_traits[2])
-      end
-      if current_player.number[4] >= 2 then 
-         current_player.apply_traits(script_traits[3])
-      end
-   end
-   if current_player.number[2] == 2 then 
-      if current_player.number[3] == 1 then 
-         current_player.apply_traits(script_traits[12])
-      end
-      if current_player.number[3] == 2 then 
-         current_player.apply_traits(script_traits[13])
-      end
-      if current_player.number[3] >= 3 then 
-         current_player.apply_traits(script_traits[14])
-      end
-      if current_player.number[4] == 1 then 
-         current_player.apply_traits(script_traits[2])
-      end
-      if current_player.number[4] >= 2 then 
-         current_player.apply_traits(script_traits[3])
-      end
-   end
 end
 
 for each player do
@@ -601,6 +647,68 @@ for each player do
       end
       if global.number[10] != 0 then 
          current_player.number[1] = 1
+      end
+   end
+end
+
+
+for each player do
+   global.object[0] = no_object
+   global.object[0] = current_player.try_get_armor_ability()
+   global.object[3] = current_player.object[3]
+   if not global.object[0].is_of_type(hologram) then
+      if global.object[0].is_in_use() and global.object[3].number[3] == 0 then
+         if not global.object[0].is_of_type(armor_lock) and not global.object[0].is_of_type(drop_shield) then
+            global.object[1] = current_player.get_weapon(secondary)
+            if global.object[1].is_of_type(magnum) then
+               current_player.biped.remove_weapon(secondary, true)
+               current_player.biped.add_weapon(magnum, secondary)
+            end
+            global.object[1] = current_player.get_weapon(primary)
+            if global.object[1].is_of_type(magnum) then
+               current_player.biped.remove_weapon(primary, true)
+               current_player.biped.add_weapon(magnum, primary)
+            end
+         end
+         if global.object[0].is_of_type(armor_lock) or global.object[0].is_of_type(drop_shield) then
+            global.object[2] = current_player.biped.place_at_me(magnum, "HM_ammo_weapon", none, 0, 0, 0, none)
+            global.object[2].attach_to(current_player.biped, 0, 0, 0, relative)
+            global.object[2].detach()
+            global.object[2].player[0] = current_player
+            global.object[2] = current_player.biped.place_at_me(magnum, "HM_ammo_weapon", none, 0, 0, 0, none)
+            global.object[2].attach_to(current_player.biped, 0, 0, 0, relative)
+            global.object[2].detach()
+            global.object[2].player[0] = current_player
+         end
+         global.object[3].number[3] = 1
+      end
+      if not global.object[0].is_in_use() and global.object[3].number[3] == 1 then
+         for each object with label "HM_ammo_weapon" do
+            if current_object.player[0] == current_player then
+               current_object.delete()
+            end
+         end
+         global.object[3].number[3] = 0
+      end
+   end
+   if global.object[0].is_of_type(hologram) then
+      global.number[10] = game.round_timer
+      global.number[10] %= 7
+      global.object[1] = current_player.object[3]
+      if global.number[10] != 0 and global.object[1].number[3] == 0 then
+         for each object with label "HM_ammo_weapon" do
+            if current_object.player[0] == current_player then
+               current_object.delete()
+            end
+         end
+         global.object[1].number[3] = 1
+      end
+      if global.number[10] == 0 and global.object[1].number[3] == 1 then
+         global.object[2] = current_player.biped.place_at_me(magnum, "HM_ammo_weapon", none, 0, 0, 0, none)
+         global.object[2].attach_to(current_player.biped, 0, 0, 0, relative)
+         global.object[2].detach()
+         global.object[2].player[0] = current_player
+         global.object[1].number[3] = 0
       end
    end
 end
@@ -723,7 +831,7 @@ for each object with label "HM_Camp" do
                            global.object[1].number[3] -= 90
                         end
                      end
-                     if current_player.number[2] == 1 or current_player.number[2] >= 3 then 
+                     if current_player.number[2] >= 2 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 30
                         end
@@ -737,7 +845,7 @@ for each object with label "HM_Camp" do
                            global.object[1].number[3] -= 120
                         end
                      end
-                     if current_player.number[2] == 2 then 
+                     if current_player.number[2] == 1 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 45
                         end
@@ -791,7 +899,7 @@ for each object with label "HM_Camp" do
                            global.object[1].number[3] -= 60
                         end
                      end
-                     if current_player.number[2] == 1 or current_player.number[2] >= 3 then 
+                     if current_player.number[2] >= 2 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 20
                         end
@@ -805,7 +913,7 @@ for each object with label "HM_Camp" do
                            global.object[1].number[3] -= 80
                         end
                      end
-                     if current_player.number[2] == 2 then 
+                     if current_player.number[2] == 1 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 30
                         end
@@ -859,7 +967,7 @@ for each object with label "HM_Camp" do
                            global.object[1].number[3] -= 30
                         end
                      end
-                     if current_player.number[2] == 1 or current_player.number[2] >= 3 then 
+                     if current_player.number[2] >= 2 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 10
                         end
@@ -873,7 +981,7 @@ for each object with label "HM_Camp" do
                            global.object[1].number[3] -= 40
                         end
                      end
-                     if current_player.number[2] == 2 then 
+                     if current_player.number[2] == 1 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 10
                         end
@@ -1046,7 +1154,7 @@ for each object with label "HM_Tower" do
                            global.object[1].number[3] -= 90
                         end
                      end
-                     if current_player.number[2] == 1 or current_player.number[2] >= 3 then 
+                     if current_player.number[2] >= 2 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 30
                         end
@@ -1060,7 +1168,7 @@ for each object with label "HM_Tower" do
                            global.object[1].number[3] -= 120
                         end
                      end
-                     if current_player.number[2] == 2 then 
+                     if current_player.number[2] == 1 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 45
                         end
@@ -1114,7 +1222,7 @@ for each object with label "HM_Tower" do
                            global.object[1].number[3] -= 60
                         end
                      end
-                     if current_player.number[2] == 1 or current_player.number[2] >= 3 then 
+                     if current_player.number[2] >= 2 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 20
                         end
@@ -1128,7 +1236,7 @@ for each object with label "HM_Tower" do
                            global.object[1].number[3] -= 80
                         end
                      end
-                     if current_player.number[2] == 2 then 
+                     if current_player.number[2] == 1 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 30
                         end
@@ -1182,7 +1290,7 @@ for each object with label "HM_Tower" do
                            global.object[1].number[3] -= 30
                         end
                      end
-                     if current_player.number[2] == 1 or current_player.number[2] >= 3 then 
+                     if current_player.number[2] >= 2 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 10
                         end
@@ -1196,7 +1304,7 @@ for each object with label "HM_Tower" do
                            global.object[1].number[3] -= 40
                         end
                      end
-                     if current_player.number[2] == 2 then 
+                     if current_player.number[2] == 1 then 
                         if current_player.number[3] <= 0 then 
                            global.object[1].number[3] -= 10
                         end
