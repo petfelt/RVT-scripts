@@ -507,8 +507,25 @@ end
 for each player do
    global.number[1] = 0
    global.object[0] = current_player.biped
+   global.object[1] = current_player.object[3]
    if global.object[0] != no_object then 
       current_player.object[0] = global.object[0]
+      global.object[1].number[4] = 0
+   end
+   if global.object[0] == no_object then
+      if current_player.number[2] == 3 and current_player.number[7] >= 3 then
+         global.object[1] = current_player.object[3]
+         global.object[1] = global.object[1].object[0]
+         global.object[2] = current_player.object[3]
+         global.object[2] = global.object[2].object[1]
+         if global.object[2] != no_object then
+            game.show_message_to(current_player, none, "Your portals have dissipated.")
+         end
+         global.object[1].object[1].delete()
+         global.object[1].delete()
+         global.object[2].object[1].delete()
+         global.object[2].delete()
+      end
    end
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
       current_player.score -= 0
@@ -532,17 +549,6 @@ for each player do
             global.number[2] = 10
          end
          global.player[0].score += global.number[2]
-      end
-      if current_player.number[2] == 3 then
-         global.object[1] = current_player.object[3]
-         global.object[1] = global.object[1].object[0]
-         global.object[2] = current_player.object[3]
-         global.object[2] = global.object[2].object[1]
-         global.object[1].object[1].delete()
-         global.object[1].delete()
-         global.object[2].object[1].delete()
-         global.object[2].delete()
-         game.show_message_to(current_player, none, "Your portals have dissipated.")
       end
    end
 end
