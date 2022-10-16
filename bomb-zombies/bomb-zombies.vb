@@ -31,7 +31,7 @@ declare player.object[0] with network priority low
 declare player.object[1] with network priority low
 declare player.object[2] with network priority low
 declare player.object[3] with network priority low
-declare player.timer[0] = script_option[13]
+declare player.timer[0] = 3
 declare player.timer[1] = 5
 declare player.timer[2] = 1
 declare player.timer[3] = 2
@@ -86,54 +86,52 @@ end
 
 on local: do
    for each player do
-      if current_player.number[0] == 1 then 
-         current_player.timer[3].set_rate(-100%)
-         global.number[5] = 0
-         global.object[3] = current_player.biped
-         global.object[2] = current_player.biped.place_at_me(hill_marker, none, none, 0, 0, 1, none)
-         global.object[2].attach_to(global.object[3], 0, 0, 0, relative)
-         global.object[2].detach()
-         global.number[5] = current_player.biped.get_distance_to(global.object[2])
-         global.object[2].delete()
-         if current_player.is_spartan() then 
-            if global.number[5] <= 2 and current_player.number[4] == 0 then 
-               current_player.number[4] = 1
-               current_player.timer[3].reset()
-            end
-            if global.number[5] >= 3 and current_player.number[4] == 1 then 
-               current_player.number[4] = 2
-               current_player.timer[3].reset()
-            end
-            if global.number[5] <= 2 and current_player.number[4] == 2 then 
-               current_player.number[4] = 3
-               current_player.timer[3].reset()
-            end
-            if global.number[5] >= 3 and current_player.number[4] == 3 then 
-               current_player.number[4] = 4
-               current_player.timer[3].reset()
-            end
+      current_player.timer[3].set_rate(-100%)
+      global.number[5] = 0
+      global.object[3] = current_player.biped
+      global.object[2] = current_player.biped.place_at_me(hill_marker, none, none, 0, 0, 1, none)
+      global.object[2].attach_to(global.object[3], 0, 0, 0, relative)
+      global.object[2].detach()
+      global.number[5] = current_player.biped.get_distance_to(global.object[2])
+      global.object[2].delete()
+      if current_player.is_spartan() then 
+         if global.number[5] <= 2 and current_player.number[4] == 0 then 
+            current_player.number[4] = 1
+            current_player.timer[3].reset()
          end
-         if current_player.is_elite() then 
-            if global.number[5] >= 4 and current_player.number[4] == 3 then 
-               current_player.number[4] = 4
-               current_player.timer[3].reset()
-            end
-            if global.number[5] <= 3 and current_player.number[4] == 2 then 
-               current_player.number[4] = 3
-               current_player.timer[3].reset()
-            end
-            if global.number[5] >= 4 and current_player.number[4] == 1 then 
-               current_player.number[4] = 2
-               current_player.timer[3].reset()
-            end
-            if global.number[5] <= 3 and current_player.number[4] == 0 then 
-               current_player.number[4] = 1
-               current_player.timer[3].reset()
-            end
+         if global.number[5] >= 3 and current_player.number[4] == 1 then 
+            current_player.number[4] = 2
+            current_player.timer[3].reset()
          end
-         if current_player.timer[3].is_zero() then 
-            current_player.number[4] = 0
+         if global.number[5] <= 2 and current_player.number[4] == 2 then 
+            current_player.number[4] = 3
+            current_player.timer[3].reset()
          end
+         if global.number[5] >= 3 and current_player.number[4] == 3 then 
+            current_player.number[4] = 4
+            current_player.timer[3].reset()
+         end
+      end
+      if current_player.is_elite() then 
+         if global.number[5] >= 4 and current_player.number[4] == 3 then 
+            current_player.number[4] = 4
+            current_player.timer[3].reset()
+         end
+         if global.number[5] <= 3 and current_player.number[4] == 2 then 
+            current_player.number[4] = 3
+            current_player.timer[3].reset()
+         end
+         if global.number[5] >= 4 and current_player.number[4] == 1 then 
+            current_player.number[4] = 2
+            current_player.timer[3].reset()
+         end
+         if global.number[5] <= 3 and current_player.number[4] == 0 then 
+            current_player.number[4] = 1
+            current_player.timer[3].reset()
+         end
+      end
+      if current_player.timer[3].is_zero() then 
+         current_player.number[4] = 0
       end
    end
 end
@@ -164,13 +162,17 @@ for each player do
    end
    global.object[3] = no_object
    global.object[3] = current_player.biped
-   if global.object[3] != no_object and current_player.object[0] == no_object and current_player.number[3] == 1 then 
-      current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
-      current_player.object[0].attach_to(global.object[3], 0, 0, -30, relative)
+   if global.object[3] != no_object then
+      global.object[3].player[0] = current_player
+   end
+   if global.object[3] != no_object and current_player.number[3] == 1 then 
+      global.object[2] = global.object[3].place_at_me(capture_plate, none, none, 0, 0, 0, none)
+      global.object[2].attach_to(global.object[3], 0, 0, -25, relative)
+      current_player.object[0] = global.object[2]
       current_player.number[3] = 2
    end
-   if global.object[3] != no_object and current_player.object[0] != no_object and current_player.number[3] == 1 then
-      current_player.object[0].attach_to(global.object[3], 0, 0, -30, relative)
+   if global.object[3] != no_object and current_player.number[3] == 3 then
+      current_player.object[0].attach_to(global.object[3], 0, 0, -25, relative)
       current_player.number[3] = 2
    end
 end
@@ -179,29 +181,29 @@ on object death: do
    if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) or killed_object.is_of_type(monitor) then
       global.player[0] = killed_object.player[0]
       global.player[0].object[0].detach()
-      global.player[0].number[3] = 1
+      global.player[0].number[3] = 3
    end
 end
 
 for each player do
-   if current_player.team == team[1] and current_player.number[4] == 4 and current_player.timer[0].is_zero() then 
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 8, 0, -100, none)
+   if current_player.number[4] == 4 and current_player.timer[0].is_zero() then 
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 5, 0, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, -8, 0, -100, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, -5, 0, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 0, 8, -100, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 0, 5, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 0, -8, -100, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 0, -5, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
       current_player.timer[0].reset()
    end
 end
 
-for each object with label "inf_NO_USE_zombie_bomb" do
+for each object with label "BoZ_NO_USE_zombie_bomb" do
    if current_object.timer[1].is_zero() then 
       current_object.kill(false)
    end
@@ -304,6 +306,10 @@ if script_option[1] == 1 then
                current_player.apply_traits(script_traits[1])
                current_player.biped.set_waypoint_icon(skull)
                current_player.biped.set_waypoint_priority(high)
+               for each object with label "BoZ_Map_Has_Target_Locator" do
+                  current_player.biped.remove_weapon(secondary, true)
+                  current_player.biped.add_weapon(target_locator, secondary)
+               end
                current_player.number[1] = 1
                current_player.score += script_option[11]
                send_incident(inf_last_man, current_player, all_players)
@@ -382,7 +388,7 @@ for each player do
          current_player.timer[2].reset()
       end
    end
-   if current_player.number[0] == 1 then 
+   if current_player.number[0] >= 0 then 
       current_player.timer[0].set_rate(-100%)
    end
 end
