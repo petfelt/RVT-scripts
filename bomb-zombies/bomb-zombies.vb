@@ -38,6 +38,7 @@ declare player.timer[3] = 2
 declare object.number[0] with network priority low
 declare object.timer[0] = script_option[3]
 declare object.timer[1] = script_option[13]
+declare object.player[0] with network priority low
 
 for each player do
    if current_player.number[0] != 1 then 
@@ -163,26 +164,39 @@ for each player do
    end
    global.object[3] = no_object
    global.object[3] = current_player.biped
-   if current_player.number[3] == 1 and global.object[3] != no_object then 
-      global.object[2] = global.object[3].place_at_me(capture_plate, none, none, 0, 0, 1, none)
-      global.object[2].attach_to(global.object[3], 0, 0, -30, relative)
-      current_player.object[0] = global.object[2]
+   if global.object[3] != no_object and current_player.object[0] == no_object and current_player.number[3] == 1 then 
+      current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+      current_player.object[0].attach_to(global.object[3], 0, 0, -30, relative)
       current_player.number[3] = 2
+   end
+   if global.object[3] != no_object and current_player.object[0] != no_object and current_player.number[3] == 1 then
+      current_player.object[0].attach_to(global.object[3], 0, 0, -30, relative)
+      current_player.number[3] = 2
+   end
+end
+
+on object death: do
+   if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) or killed_object.is_of_type(monitor) then
+      global.player[0] = killed_object.player[0]
+      global.player[0].object[0].detach()
+      global.player[0].number[3] = 1
    end
 end
 
 for each player do
    if current_player.team == team[1] and current_player.number[4] == 4 and current_player.timer[0].is_zero() then 
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 7, 0, 7, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 8, 0, -100, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, -7, 0, 7, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, -8, 0, -100, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 0, 7, 7, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 0, 8, -100, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 0, -7, 7, none)
+      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "inf_NO_USE_zombie_bomb", none, 0, -8, -100, none)
+      global.object[3].timer[1].reset()
+      global.object[3].timer[1].set_rate(-100%)
       current_player.timer[0].reset()
    end
 end
