@@ -15,6 +15,9 @@ declare global.object[0] with network priority low
 declare global.object[1] with network priority local
 declare global.object[2] with network priority low
 declare global.object[3] with network priority low
+declare global.object[4] with network priority low
+declare global.object[5] with network priority low
+declare global.object[6] with network priority low
 declare global.player[0] with network priority local
 declare global.player[1] with network priority local
 declare global.team[0] with network priority low
@@ -27,11 +30,11 @@ declare player.number[2] with network priority low = 1
 declare player.number[3] with network priority low
 declare player.number[4] with network priority low
 declare player.number[5] with network priority low
-declare player.object[0] with network priority low
-declare player.object[1] with network priority low
+declare player.object[0] with network priority local
+declare player.object[1] with network priority local
 declare player.object[2] with network priority low
 declare player.object[3] with network priority low
-declare player.timer[0] = 3
+declare player.timer[0] = script_option[14]
 declare player.timer[1] = 5
 declare player.timer[2] = 1
 declare player.timer[3] = 2
@@ -39,6 +42,33 @@ declare object.number[0] with network priority low
 declare object.timer[0] = script_option[3]
 declare object.timer[1] = script_option[13]
 declare object.player[0] with network priority low
+
+function check_distance()
+   if global.number[7] == 0 then
+      global.number[6] += 1
+      global.object[4].attach_to(global.object[5], 0, 0, -2, relative)
+      global.object[4].detach()
+      global.object[5].attach_to(global.object[4], 0, 0, 0, relative)
+      global.object[5].detach()
+      for each object with label "BoZ_Floor" do
+         if current_object.shape_contains(global.object[4]) then
+            global.number[7] = 1
+         end
+      end
+      if global.object[4].is_out_of_bounds() then
+         global.object[4].attach_to(global.object[5], 0, 0, 2, relative)
+         global.object[4].detach()
+         global.number[7] = 1
+      end
+      check_distance()
+   end
+   if global.number[6] > 75 then
+      global.object[4].attach_to(global.player[0].object[0], 0, 0, -18, relative)
+      global.object[5].attach_to(global.player[0].object[0], 0, 0, -18, relative)
+      global.object[4].detach()
+      global.object[5].detach()
+   end
+end
 
 for each player do
    if current_player.number[0] != 1 then 
@@ -157,7 +187,16 @@ end
 
 for each player do
    if current_player.number[3] == 0 and current_player.timer[1].is_zero() then 
-      send_incident(infection_game_start, current_player, no_player)
+      game.show_message_to(current_player, announce_infection, "Bomber Zombies")
+      for each object with label "BoZ_Floor" do
+         global.object[6] = current_object.place_at_me(flag_stand, none, none, 0, 0, 0, none)
+         global.object[6].attach_to(current_object, 0, 0, 0, relative)
+         global.object[6].detach()
+         current_object.attach_to(global.object[6], 0, 0, 0, relative)
+         current_object.set_scale(1)
+         current_object.detach()
+         global.object[6].delete()
+      end
       current_player.number[3] = 1
    end
    global.object[3] = no_object
@@ -166,13 +205,12 @@ for each player do
       global.object[3].player[0] = current_player
    end
    if global.object[3] != no_object and current_player.number[3] == 1 then 
-      global.object[2] = global.object[3].place_at_me(capture_plate, none, none, 0, 0, 0, none)
-      global.object[2].attach_to(global.object[3], 0, 0, -25, relative)
-      current_player.object[0] = global.object[2]
-      current_player.number[3] = 2
-   end
-   if global.object[3] != no_object and current_player.number[3] == 3 then
-      current_player.object[0].attach_to(global.object[3], 0, 0, -25, relative)
+      current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+      current_player.object[0].attach_to(global.object[3], 0, 0, -2, relative)
+      current_player.object[1] = current_player.object[0].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+      current_player.object[1].attach_to(current_player.object[0], 0, 0, 0, relative)
+      current_player.object[2] = current_player.object[1].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+      current_player.object[2].attach_to(current_player.object[0], 0, 0, 0, relative)
       current_player.number[3] = 2
    end
 end
@@ -180,26 +218,35 @@ end
 on object death: do
    if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) or killed_object.is_of_type(monitor) then
       global.player[0] = killed_object.player[0]
-      global.player[0].object[0].detach()
-      global.player[0].number[3] = 3
+      global.player[0].object[0].delete()
+      global.player[0].object[1].delete()
+      global.player[0].number[3] = 1
    end
 end
 
 for each player do
    if current_player.number[4] == 4 and current_player.timer[0].is_zero() then 
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 5, 0, 0, none)
+      global.number[6] = 0
+      global.number[7] = 0
+      global.player[0] = current_player
+      global.object[4] = current_player.object[1]
+      global.object[5] = current_player.object[2]
+      global.object[4].detach()
+      global.object[5].detach()
+      check_distance()
+      global.object[3] = global.object[4].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, -5, -5, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, -5, 0, 0, none)
+      global.object[3] = global.object[4].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, -5, 5, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 0, 5, 0, none)
+      global.object[3] = global.object[4].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 4, 0, 0, none)
       global.object[3].timer[1].reset()
       global.object[3].timer[1].set_rate(-100%)
-      global.object[3] = current_player.object[0].place_at_me(fusion_coil, "BoZ_NO_USE_zombie_bomb", none, 0, -5, 0, none)
-      global.object[3].timer[1].reset()
-      global.object[3].timer[1].set_rate(-100%)
+      current_player.number[4] = 0
       current_player.timer[0].reset()
+      current_player.object[1].attach_to(current_player.object[0], 0, 0, 0, relative)
+      current_player.object[2].attach_to(current_player.object[0], 0, 0, 0, relative)
    end
 end
 
@@ -236,15 +283,26 @@ for each player do
          send_incident(infection_kill, global.player[1], global.player[0])
          global.player[1].score += script_option[10]
          global.player[1].script_stat[1] += 1
+         global.player[1].number[5] = 1
       end
-      if current_player.killer_type_is(suicide) then 
+      if current_player.killer_type_is(suicide) then
          global.player[1].score += script_option[8]
-         if script_option[12] == 1 then 
-            global.player[0].number[0] = 1
-         end
+         current_player.number[0] = 1
       end
       if current_player.killer_type_is(betrayal) and global.player[0].number[0] == global.player[1].number[0] then 
          global.player[1].score += script_option[9]
+      end
+      if script_option[12] == 1 and not current_player.killer_type_is(betrayal) and global.player[0].number[0] == 0 then 
+         for each player do
+            if current_player.number[0] == 1 and current_player.number[5] != 1 then
+               send_incident(infection_kill, current_player, global.player[0])
+               current_player.score += script_option[10]
+               current_player.script_stat[1] += 1
+            end
+            current_player.number[5] = 0
+         end
+         send_incident(inf_new_infection, global.team[1], global.player[0])
+         current_player.number[0] = 1
       end
    end
 end
@@ -388,7 +446,5 @@ for each player do
          current_player.timer[2].reset()
       end
    end
-   if current_player.number[0] >= 0 then 
-      current_player.timer[0].set_rate(-100%)
-   end
+   current_player.timer[0].set_rate(-100%)
 end
