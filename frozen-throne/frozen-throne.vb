@@ -30,6 +30,34 @@ declare player.timer[2] = 15
 declare player.timer[3] = 5
 declare object.timer[0] = 1
 
+function get_rand_weapon_exclude_none()
+   global.number[4] = rand(29)
+   if global.number[4] == 0 then
+      get_rand_weapon_exclude_none()
+   end
+end
+
+function get_rand_weapon_default()
+   global.number[4] = rand(21)
+   if global.number[4] == 0 then
+      get_rand_weapon_default()
+   end
+end
+
+function get_rand_weapon_default_plus_turrets()
+   global.number[4] = rand(23)
+   if global.number[4] == 0 then
+      get_rand_weapon_default_plus_turrets()
+   end
+end
+
+function get_rand_weapon_default_plus_turrets_grenades()
+   global.number[4] = rand(25)
+   if global.number[4] == 0 then
+      get_rand_weapon_default_plus_turrets_grenades()
+   end
+end
+
 if game.teams_enabled == 1 then 
    for each object with label "ffa_only" do
       current_object.delete()
@@ -68,27 +96,6 @@ for each player do
    end
    if game.score_to_win == 0 and game.teams_enabled == 0 then 
       current_player.set_round_card_title("Get kills, headshots, and sticks\nto take the Throne.\nRule the Throne to earn more points.")
-   end
-end
-
-for each team do
-   if script_option[0] == 8 then 
-      current_team.set_co_op_spawning(true)
-   end
-end
-
-for each object with label "bro_spawn_loc" do
-   if script_option[0] == 8 then 
-      current_object.set_invincibility(1)
-      current_object.set_pickup_permissions(no_one)
-      current_object.set_spawn_location_fireteams(all)
-      current_object.set_spawn_location_permissions(allies)
-      for each player do
-         if current_object.team == current_player.team then 
-            global.number[1] = 0
-            current_player.set_primary_respawn_object(current_object)
-         end
-      end
    end
 end
 
@@ -185,13 +192,13 @@ for each player do
       if global.object[0] == no_object then 
          script_widget[1].set_visibility(current_player, false)
       end
-      if global.number[11] <= 11 then 
-         current_player.apply_traits(script_traits[0])
-      end
-      if global.number[11] >= 12 then 
-         current_player.apply_traits(script_traits[1])
-      end
       if current_player.timer[1].is_zero() then 
+         if global.number[11] <= 11 then 
+            current_player.apply_traits(script_traits[0])
+         end
+         if global.number[11] >= 12 then 
+            current_player.apply_traits(script_traits[1])
+         end
          script_widget[0].set_visibility(current_player, false)
          script_widget[1].set_visibility(current_player, false)
          current_player.biped.kill(false)
@@ -201,7 +208,7 @@ for each player do
 end
 
 for each player do
-   if current_player.number[0] == 1 and current_player.timer[1].is_zero() then 
+   if current_player.number[0] == 1 and current_player.timer[1].is_zero() and current_player.number[4] >= 3 then 
       if global.number[11] <= 11 then 
          current_player.apply_traits(script_traits[0])
       end
@@ -241,27 +248,126 @@ for each player do
    end
 end
 
-if script_option[0] == 3 or script_option[0] == 7 then 
-   for each object with label 1 do
-      current_object.delete()
-   end
-end
-
 for each player do
-   if current_player.number[0] != 1 then 
+   if script_option[14] >= 1 and current_player.number[0] != 1 then 
       global.object[0] = no_object
       global.object[0] = current_player.biped
       global.object[1] = no_object
       global.object[1] = current_player.try_get_weapon(primary)
       if global.object[1].is_of_type(plasma_launcher) then 
          global.object[0].remove_weapon(primary, true)
-         global.object[0].add_weapon(concussion_rifle, primary)
       end
       global.object[1] = no_object
       global.object[1] = current_player.try_get_weapon(secondary)
       if global.object[1].is_of_type(plasma_launcher) then 
          global.object[0].remove_weapon(secondary, true)
-         global.object[0].add_weapon(concussion_rifle, secondary)
+      end
+      if script_option[14] == 2 then
+         global.number[4] = script_option[15]
+         if global.number[4] == -1 then
+            global.number[4] = rand(29)
+         end
+         if global.number[4] == -2 then
+            global.number[4] = rand(28)
+         end
+         if global.number[4] == -3 then
+            get_rand_weapon_exclude_none()
+         end
+         if global.number[4] == -4 then
+            get_rand_weapon_default()
+         end
+         if global.number[4] == -5 then
+            get_rand_weapon_default_plus_turrets()
+         end
+         if global.number[4] == -6 then
+            get_rand_weapon_default_plus_turrets_grenades()
+         end
+         if global.number[4] > 0 then
+            if global.number[4] == 1 then
+               global.object[0].add_weapon(golf_club, primary)
+            end
+            if global.number[4] == 2 then
+               global.object[0].add_weapon(magnum, primary)
+            end
+            if global.number[4] == 3 then
+               global.object[0].add_weapon(assault_rifle, primary)
+            end
+            if global.number[4] == 4 then
+               global.object[0].add_weapon(dmr, primary)
+            end
+            if global.number[4] == 5 then
+               global.object[0].add_weapon(shotgun, primary)
+            end
+            if global.number[4] == 6 then
+               global.object[0].add_weapon(sniper_rifle, primary)
+            end
+            if global.number[4] == 7 then
+               global.object[0].add_weapon(rocket_launcher, primary)
+            end
+            if global.number[4] == 8 then
+               global.object[0].add_weapon(spartan_laser, primary)
+            end
+            if global.number[4] == 9 then
+               global.object[0].add_weapon(grenade_launcher, primary)
+            end
+            if global.number[4] == 10 then
+               global.object[0].add_weapon(plasma_pistol, primary)
+            end
+            if global.number[4] == 11 then
+               global.object[0].add_weapon(needler, primary)
+            end
+            if global.number[4] == 12 then
+               global.object[0].add_weapon(plasma_rifle, primary)
+            end
+            if global.number[4] == 13 then
+               global.object[0].add_weapon(plasma_repeater, primary)
+            end
+            if global.number[4] == 14 then
+               global.object[0].add_weapon(needle_rifle, primary)
+            end
+            if global.number[4] == 15 then
+               global.object[0].add_weapon(spiker, primary)
+            end
+            if global.number[4] == 16 then
+               global.object[0].add_weapon(gravity_hammer, primary)
+            end
+            if global.number[4] == 17 then
+               global.object[0].add_weapon(energy_sword, primary)
+            end
+            if global.number[4] == 18 then
+               global.object[0].add_weapon(concussion_rifle, primary)
+            end
+            if global.number[4] == 21 then
+               global.object[0].add_weapon(focus_rifle, primary)
+            end
+            if global.number[4] == 22 then
+               global.object[0].add_weapon(fuel_rod_gun, primary)
+            end
+            if global.number[4] == 21 then
+               global.object[0].add_weapon(detached_machine_gun_turret, force)
+            end
+            if global.number[4] == 22 then
+               global.object[0].add_weapon(detached_plasma_cannon, force)
+            end
+            if global.number[4] == 23 then
+               current_player.frag_grenades += 2
+            end
+            if global.number[4] == 24 then
+               current_player.plasma_grenades += 2
+            end
+            if global.number[4] == 25 then
+               global.object[0].add_weapon(flag, primary)
+            end
+            if global.number[4] == 26 then
+               global.object[0].add_weapon(bomb, primary)
+            end
+            if global.number[4] == 27 then
+               global.object[0].add_weapon(skull, primary)
+            end
+            if global.number[4] == 28 then
+               global.object[0].add_weapon(target_locator, primary)
+            end
+         end
       end
    end
 end
@@ -285,7 +391,7 @@ for each player do
             global.number[2] = 0
             global.number[3] = 0
             global.number[3] = current_player.try_get_death_damage_type()
-            if global.number[3] == 19 and global.player[0].number[0] == 1 then 
+            if global.number[3] == enums.damage_reporting_type.plasma_launcher and global.player[0].number[0] == 1 and global.player[0].number[4] >= 4 then 
                global.player[0].score += script_option[10]
             end
             if global.number[3] == 6 then 
@@ -306,13 +412,19 @@ for each player do
          if current_player.number[0] == 1 and current_player.number[4] >= 4 then 
             global.player[0].score += script_option[5]
             send_incident(vip_kill, global.player[0], current_player)
+            game.show_message_to(all_players, none, "%s killed King %s", global.player[0], current_player)
             current_player.biped.set_waypoint_icon(none)
          end
          if global.number[0] == 1 then 
             global.player[0].score += script_option[7]
          end
          if global.number[0] == 2 then 
-            global.player[0].score += script_option[8]
+            if current_player.number[0] == 1 and current_player.number[3] >= 4 then
+               global.player[0].score += script_option[8]
+            end
+            if current_player.number[0] != 1 or current_player.number[3] < 4 then
+               global.player[0].score += script_option[7]
+            end
          end
          if global.number[0] == 3 then 
             global.player[0].score += script_option[9]
@@ -337,7 +449,7 @@ for each player do
          if current_player.number[0] != 1 then 
             current_player.score += script_option[3]
          end
-         if current_player.number[0] == 1 then 
+         if current_player.number[0] == 1 and current_player.number[4] >= 3 then 
             current_player.score += script_option[13]
          end
       end
@@ -385,7 +497,7 @@ for each player do
       if global.number[0] == 2 then 
          global.object[0] = no_object
          global.object[0] = global.player[0].try_get_armor_ability()
-         if global.object[0].has_forge_label(6) and global.object[0].is_in_use() then 
+         if global.object[0].has_forge_label(5) and global.object[0].is_in_use() then 
             send_incident(dlc_achieve_2, global.player[0], global.player[0], 65)
          end
       end
