@@ -7,7 +7,7 @@ declare global.number[4] with network priority local
 declare global.number[5] with network priority low
 declare global.number[6] with network priority low
 declare global.number[7] with network priority low
-declare global.number[8] with network priority low
+declare global.number[8] with network priority low = script_option[15]
 declare global.number[9] with network priority low
 declare global.number[10] with network priority low
 declare global.number[11] with network priority low
@@ -18,18 +18,23 @@ declare global.object[3] with network priority low
 declare global.object[4] with network priority low
 declare global.object[5] with network priority low
 declare global.object[6] with network priority low
+declare global.object[7] with network priority low
+declare global.object[8] with network priority low
 declare global.player[0] with network priority local
 declare global.player[1] with network priority local
 declare global.team[0] with network priority low
 declare global.team[1] with network priority low
 declare global.timer[0] = script_option[3]
 declare global.timer[1] = 10
+declare global.timer[2] = 3
+declare global.timer[3] = 10
 declare player.number[0] with network priority low
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low = 1
 declare player.number[3] with network priority low
 declare player.number[4] with network priority low
 declare player.number[5] with network priority low
+declare player.number[6] with network priority low
 declare player.object[0] with network priority local
 declare player.object[1] with network priority local
 declare player.object[2] with network priority low
@@ -292,7 +297,7 @@ for each player do
       if current_player.killer_type_is(betrayal) and global.player[0].number[0] == global.player[1].number[0] then 
          global.player[1].score += script_option[9]
       end
-      if script_option[12] == 1 and not current_player.killer_type_is(betrayal) and global.player[0].number[0] == 0 then 
+      if not current_player.killer_type_is(betrayal) and global.player[0].number[0] == 0 then 
          for each player do
             if current_player.number[0] == 1 and current_player.number[5] != 1 then
                send_incident(infection_kill, current_player, global.player[0])
@@ -369,6 +374,17 @@ if script_option[1] == 1 then
                   current_player.biped.add_weapon(target_locator, secondary)
                end
                current_player.number[1] = 1
+               global.number[10] = 1
+               global.number[11] = 0
+               global.timer[3].reset()
+               for each object with label "BoZ_Tele" do
+                  if current_object.spawn_sequence == 1 then
+                     global.object[7] = current_object
+                  end
+                  if current_object.spawn_sequence == 0 then
+                     current_object.set_scale(1)
+                  end
+               end
                current_player.score += script_option[11]
                send_incident(inf_last_man, current_player, all_players)
             end
@@ -381,6 +397,34 @@ end
 for each player do
    if current_player.number[1] == 1 then 
       current_player.apply_traits(script_traits[1])
+      for each object with label "BoZ_Tele" do
+         if current_object.spawn_sequence == 0 and not global.timer[3].is_zero() then
+            current_object.attach_to(current_player.biped, 0, 0, 0, relative)
+            current_object.detach()
+            current_object.copy_rotation_from(current_player.biped, true)
+            current_object.set_shape_visibility(everyone)
+         end
+      end
+   end
+end
+
+if global.number[10] == 1 then
+   global.timer[3].set_rate(-100%)
+   if global.timer[3].is_zero() then
+      for each object with label "BoZ_Tele_Pin" do
+         if current_object.spawn_sequence == global.number[11] then
+            global.object[8] = current_object.place_at_me(block_1x1_flat, none, none, 0, 0, 0, none)
+            global.object[8].attach_to(current_object, 10, 0, 0, relative)
+            global.object[8].detach()
+            global.object[7].attach_to(global.object[8], 0, 0, 0, relative)
+            global.object[7].detach()
+         end
+      end
+      global.number[11] += 1
+      if global.number[11] > 29 then
+         global.number[11] = 0
+      end
+      global.timer[3].reset()
    end
 end
 
@@ -447,4 +491,30 @@ for each player do
       end
    end
    current_player.timer[0].set_rate(-100%)
+end
+
+if global.number[8] > 0 then
+   global.number[9] = game.round_timer
+   global.number[9] %= global.number[8]
+   if global.number[9] == 0 then
+      global.timer[2].reset()
+      global.timer[2].set_rate(-100%)
+   end
+   for each player do
+      if current_player.number[0] == 0 and current_player.number[1] != 1 then
+         if not global.timer[2].is_zero() then
+            current_player.apply_traits(script_traits[3])
+            current_player.biped.set_waypoint_icon(bullseye)
+            if current_player.number[6] == 0 then
+               game.show_message_to(current_player, timer_beep, "Location revealed")
+               current_player.number[6] = 1
+            end
+         end
+         if global.timer[2].is_zero() and current_player.number[6] == 1 then
+            game.show_message_to(current_player, timer_beep, "Location hidden")
+            current_player.biped.set_waypoint_icon(none)
+            current_player.number[6] = 0
+         end
+      end
+   end
 end
