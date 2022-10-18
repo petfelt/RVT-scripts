@@ -21,6 +21,7 @@ declare global.object[6] with network priority low
 declare global.object[7] with network priority low
 declare global.player[0] with network priority local
 declare global.player[1] with network priority local
+declare global.player[2] with network priority local
 declare global.team[0] with network priority low
 declare global.team[1] with network priority low
 declare global.timer[0] = script_option[3]
@@ -119,52 +120,54 @@ end
 
 on local: do
    for each player do
-      current_player.timer[3].set_rate(-100%)
-      global.number[5] = 0
-      global.object[3] = current_player.biped
-      global.object[2] = current_player.biped.place_at_me(hill_marker, none, none, 0, 0, 1, none)
-      global.object[2].attach_to(global.object[3], 0, 0, 0, relative)
-      global.object[2].detach()
-      global.number[5] = current_player.biped.get_distance_to(global.object[2])
-      global.object[2].delete()
-      if current_player.is_spartan() then 
-         if global.number[5] <= 2 and current_player.number[4] == 0 then 
-            current_player.number[4] = 1
-            current_player.timer[3].reset()
+      if current_player.number[0] == 1 then
+         current_player.timer[3].set_rate(-100%)
+         global.number[5] = 0
+         global.object[3] = current_player.biped
+         global.object[2] = current_player.biped.place_at_me(hill_marker, none, none, 0, 0, 1, none)
+         global.object[2].attach_to(global.object[3], 0, 0, 0, relative)
+         global.object[2].detach()
+         global.number[5] = current_player.biped.get_distance_to(global.object[2])
+         global.object[2].delete()
+         if current_player.is_spartan() then 
+            if global.number[5] <= 2 and current_player.number[4] == 0 then 
+               current_player.number[4] = 1
+               current_player.timer[3].reset()
+            end
+            if global.number[5] >= 3 and current_player.number[4] == 1 then 
+               current_player.number[4] = 2
+               current_player.timer[3].reset()
+            end
+            if global.number[5] <= 2 and current_player.number[4] == 2 then 
+               current_player.number[4] = 3
+               current_player.timer[3].reset()
+            end
+            if global.number[5] >= 3 and current_player.number[4] == 3 then 
+               current_player.number[4] = 4
+               current_player.timer[3].reset()
+            end
          end
-         if global.number[5] >= 3 and current_player.number[4] == 1 then 
-            current_player.number[4] = 2
-            current_player.timer[3].reset()
+         if current_player.is_elite() then 
+            if global.number[5] >= 4 and current_player.number[4] == 3 then 
+               current_player.number[4] = 4
+               current_player.timer[3].reset()
+            end
+            if global.number[5] <= 3 and current_player.number[4] == 2 then 
+               current_player.number[4] = 3
+               current_player.timer[3].reset()
+            end
+            if global.number[5] >= 4 and current_player.number[4] == 1 then 
+               current_player.number[4] = 2
+               current_player.timer[3].reset()
+            end
+            if global.number[5] <= 3 and current_player.number[4] == 0 then 
+               current_player.number[4] = 1
+               current_player.timer[3].reset()
+            end
          end
-         if global.number[5] <= 2 and current_player.number[4] == 2 then 
-            current_player.number[4] = 3
-            current_player.timer[3].reset()
+         if current_player.timer[3].is_zero() then 
+            current_player.number[4] = 0
          end
-         if global.number[5] >= 3 and current_player.number[4] == 3 then 
-            current_player.number[4] = 4
-            current_player.timer[3].reset()
-         end
-      end
-      if current_player.is_elite() then 
-         if global.number[5] >= 4 and current_player.number[4] == 3 then 
-            current_player.number[4] = 4
-            current_player.timer[3].reset()
-         end
-         if global.number[5] <= 3 and current_player.number[4] == 2 then 
-            current_player.number[4] = 3
-            current_player.timer[3].reset()
-         end
-         if global.number[5] >= 4 and current_player.number[4] == 1 then 
-            current_player.number[4] = 2
-            current_player.timer[3].reset()
-         end
-         if global.number[5] <= 3 and current_player.number[4] == 0 then 
-            current_player.number[4] = 1
-            current_player.timer[3].reset()
-         end
-      end
-      if current_player.timer[3].is_zero() then 
-         current_player.number[4] = 0
       end
    end
 end
@@ -204,10 +207,10 @@ for each player do
          global.object[6] = current_object.place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
          global.object[6].attach_to(current_object, 0, 0, 0, relative)
          global.object[6].detach()
-         current_object.attach_to(global.object[7], 0, 0, 0, relative)
+         current_object.attach_to(global.object[6], 0, 0, 0, relative)
+         current_object.set_scale(1)
          current_object.detach()
          global.object[6].delete()
-         current_object.set_scale(1)
       end
       current_player.number[3] = 1
    end
@@ -217,8 +220,16 @@ for each player do
       global.object[3].player[0] = current_player
    end
    if global.object[3] != no_object and current_player.number[3] == 1 then 
-      current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+      if current_player.number[0] == 1 then
+         current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, "BoZ_NO_USE_Zkillcheck", none, 0, 0, 0, none)
+         current_player.object[0].set_shape(cylinder, 27, 0, 1000)
+      end
+      if current_player.number[0] != 1 then
+         current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+      end
       current_player.object[0].attach_to(global.object[3], 0, 0, -2, relative)
+      global.object[6] = current_player.object[0]
+      global.object[6].player[0] = current_player
       current_player.object[1] = current_player.object[0].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
       current_player.object[1].attach_to(current_player.object[0], 0, 0, 0, relative)
       current_player.object[2] = current_player.object[1].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
@@ -227,11 +238,72 @@ for each player do
    end
 end
 
+for each player do
+   current_player.team = team[0]
+   if current_player.number[0] == 1 then 
+      current_player.team = team[1]
+      current_player.apply_traits(script_traits[0])
+   end
+end
+
+for each player do
+   if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
+      current_player.object[0].detach()
+      current_player.number[1] = 0
+      global.player[0] = current_player
+      global.player[1] = no_player
+      global.player[1] = current_player.try_get_killer()
+      if current_player.killer_type_is(kill) and global.player[0].number[0] == 1 and global.player[0].number[0] != global.player[1].number[0] then 
+         global.player[1].score += script_option[7]
+         send_incident(zombie_kill_kill, global.player[1], global.player[0])
+      end
+      if current_player.killer_type_is(kill) and script_option[2] == 1 and global.player[0].number[0] == 1 and global.player[0].number[0] != global.player[1].number[0] and global.player[1].number[2] == 1 then 
+         global.player[1].score += script_option[6]
+      end
+      if current_player.killer_type_is(kill) and not global.player[1] == no_player and global.player[0].number[0] == 0 then 
+         global.player[0].number[0] = 1
+         send_incident(inf_new_infection, global.player[1], global.player[0])
+         send_incident(infection_kill, global.player[1], global.player[0])
+         global.player[1].score += script_option[10]
+         global.player[1].script_stat[1] += 1
+         global.player[1].number[5] = 1
+      end
+      if current_player.killer_type_is(suicide) then
+         global.player[1].score += script_option[8]
+         current_player.number[0] = 1
+      end
+      if current_player.killer_type_is(betrayal) and global.player[0].number[0] == global.player[1].number[0] then 
+         global.player[1].score += script_option[9]
+      end
+      if not current_player.killer_type_is(betrayal) and global.player[0].number[0] == 0 then 
+         for each object with label "BoZ_NO_USE_Zkillcheck" do
+            global.player[2] = current_object.player[0]
+            if global.player[2].number[0] == 1 then
+               if current_object.shape_contains(current_player.object[0]) and global.player[2] != current_player then
+                  global.player[2].score += script_option[12]
+                  global.player[2].script_stat[1] += 1
+               end
+            end
+         end
+         for each player do
+            if current_player.number[0] == 1 then
+               send_incident(infection_kill, current_player, global.player[0])
+               current_player.score += script_option[10]
+            end
+         end
+         send_incident(inf_new_infection, global.team[1], global.player[0])
+         current_player.number[0] = 1
+      end
+      current_player.object[0].delete()
+   end
+end
+
 on object death: do
    if killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) or killed_object.is_of_type(monitor) then
       global.player[0] = killed_object.player[0]
       global.player[0].object[0].delete()
       global.player[0].object[1].delete()
+      global.player[0].object[2].delete()
       global.player[0].number[3] = 1
    end
 end
@@ -265,57 +337,6 @@ end
 for each object with label "BoZ_NO_USE_zombie_bomb" do
    if current_object.timer[1].is_zero() then 
       current_object.kill(false)
-   end
-end
-
-for each player do
-   current_player.team = team[0]
-   if current_player.number[0] == 1 then 
-      current_player.team = team[1]
-      current_player.apply_traits(script_traits[0])
-   end
-end
-
-for each player do
-   if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
-      current_player.number[1] = 0
-      global.player[0] = current_player
-      global.player[1] = no_player
-      global.player[1] = current_player.try_get_killer()
-      if current_player.killer_type_is(kill) and global.player[0].number[0] == 1 and global.player[0].number[0] != global.player[1].number[0] then 
-         global.player[1].score += script_option[7]
-         send_incident(zombie_kill_kill, global.player[1], global.player[0])
-      end
-      if current_player.killer_type_is(kill) and script_option[2] == 1 and global.player[0].number[0] == 1 and global.player[0].number[0] != global.player[1].number[0] and global.player[1].number[2] == 1 then 
-         global.player[1].score += script_option[6]
-      end
-      if current_player.killer_type_is(kill) and not global.player[1] == no_player and global.player[0].number[0] == 0 then 
-         global.player[0].number[0] = 1
-         send_incident(inf_new_infection, global.player[1], global.player[0])
-         send_incident(infection_kill, global.player[1], global.player[0])
-         global.player[1].score += script_option[10]
-         global.player[1].script_stat[1] += 1
-         global.player[1].number[5] = 1
-      end
-      if current_player.killer_type_is(suicide) then
-         global.player[1].score += script_option[8]
-         current_player.number[0] = 1
-      end
-      if current_player.killer_type_is(betrayal) and global.player[0].number[0] == global.player[1].number[0] then 
-         global.player[1].score += script_option[9]
-      end
-      if not current_player.killer_type_is(betrayal) and global.player[0].number[0] == 0 then 
-         for each player do
-            if current_player.number[0] == 1 and current_player.number[5] != 1 then
-               send_incident(infection_kill, current_player, global.player[0])
-               current_player.score += script_option[10]
-               current_player.script_stat[1] += 1
-            end
-            current_player.number[5] = 0
-         end
-         send_incident(inf_new_infection, global.team[1], global.player[0])
-         current_player.number[0] = 1
-      end
    end
 end
 
@@ -497,18 +518,25 @@ if global.number[8] > 0 then
       global.timer[2].set_rate(-100%)
    end
    for each player do
-      if current_player.number[0] == 0 and current_player.number[1] != 1 then
+      if current_player.number[1] != 1 then
          if not global.timer[2].is_zero() then
-            current_player.apply_traits(script_traits[3])
-            current_player.biped.set_waypoint_icon(bullseye)
-            if current_player.number[6] == 0 then
-               game.show_message_to(current_player, timer_beep, "Location revealed")
-               current_player.number[6] = 1
+            if current_player.number[0] == 0 then
+               current_player.apply_traits(script_traits[3])
+               current_player.biped.set_waypoint_icon(bullseye)
+               if current_player.number[6] == 0 then
+                  game.show_message_to(current_player, timer_beep, "Location revealed")
+               end
             end
+            if current_player.number[6] == 0 and current_player.number[0] == 1 then
+               game.show_message_to(current_player, timer_beep, "Humans revealed")
+            end
+            current_player.number[6] = 1
          end
          if global.timer[2].is_zero() and current_player.number[6] == 1 then
-            game.show_message_to(current_player, timer_beep, "Location hidden")
-            current_player.biped.set_waypoint_icon(none)
+            if current_player.number[0] == 0 then
+               game.show_message_to(current_player, timer_beep, "Location hidden")
+               current_player.biped.set_waypoint_icon(none)
+            end
             current_player.number[6] = 0
          end
       end
