@@ -19,15 +19,13 @@ declare global.object[4] with network priority low
 declare global.object[5] with network priority low
 declare global.object[6] with network priority low
 declare global.object[7] with network priority low
-declare global.object[8] with network priority low
 declare global.player[0] with network priority local
 declare global.player[1] with network priority local
 declare global.team[0] with network priority low
 declare global.team[1] with network priority low
 declare global.timer[0] = script_option[3]
 declare global.timer[1] = 10
-declare global.timer[2] = 3
-declare global.timer[3] = 10
+declare global.timer[2] = 5
 declare player.number[0] with network priority low
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low = 1
@@ -202,6 +200,15 @@ for each player do
          current_object.detach()
          global.object[6].delete()
       end
+      for each object with label "BoZ_Tele" do
+         global.object[6] = current_object.place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
+         global.object[6].attach_to(current_object, 0, 0, 0, relative)
+         global.object[6].detach()
+         current_object.attach_to(global.object[7], 0, 0, 0, relative)
+         current_object.detach()
+         global.object[6].delete()
+         current_object.set_scale(1)
+      end
       current_player.number[3] = 1
    end
    global.object[3] = no_object
@@ -230,7 +237,7 @@ on object death: do
 end
 
 for each player do
-   if current_player.number[4] == 4 and current_player.timer[0].is_zero() then 
+   if current_player.number[4] == 4 and current_player.timer[0].is_zero() and current_player.number[0] == 1 then 
       global.number[6] = 0
       global.number[7] = 0
       global.player[0] = current_player
@@ -365,31 +372,32 @@ if script_option[1] == 1 then
       end
       if global.number[3] == 1 then 
          for each player do
-            if not current_player.number[0] == 1 then 
+            if not current_player.number[0] == 1 and current_player.biped != no_object then 
                current_player.apply_traits(script_traits[1])
                current_player.biped.set_waypoint_icon(skull)
                current_player.biped.set_waypoint_priority(high)
+               current_player.biped.remove_weapon(primary, true)
+               current_player.biped.add_weapon(plasma_repeater, primary)
+               current_player.biped.remove_weapon(secondary, true)
+               current_player.biped.add_weapon(concussion_rifle, secondary)
                for each object with label "BoZ_Map_Has_Target_Locator" do
                   current_player.biped.remove_weapon(secondary, true)
                   current_player.biped.add_weapon(target_locator, secondary)
                end
-               current_player.number[1] = 1
-               global.number[10] = 1
-               global.number[11] = 0
-               global.timer[3].reset()
                for each object with label "BoZ_Tele" do
                   if current_object.spawn_sequence == 1 then
-                     global.object[7] = current_object
-                  end
-                  if current_object.spawn_sequence == 0 then
-                     current_object.set_scale(1)
+                     current_object.set_shape(cylinder, 28, 20, 20)
+                     current_object.attach_to(current_player.biped, 0, 0, 0, relative)
+                     current_player.object[3] = current_object
                   end
                end
+               current_player.number[1] = 1
                current_player.score += script_option[11]
                send_incident(inf_last_man, current_player, all_players)
+               game.show_message_to(current_player, none, "Start shooting!")
+               global.number[0] = 1
             end
          end
-         global.number[0] = 1
       end
    end
 end
@@ -397,43 +405,31 @@ end
 for each player do
    if current_player.number[1] == 1 then 
       current_player.apply_traits(script_traits[1])
-      for each object with label "BoZ_Tele" do
-         if current_object.spawn_sequence == 0 and not global.timer[3].is_zero() then
-            current_object.attach_to(current_player.biped, 0, 0, 0, relative)
-            current_object.detach()
-            current_object.copy_rotation_from(current_player.biped, true)
-            current_object.set_shape_visibility(everyone)
+      if current_player.object[3] == no_object then
+         for each object with label "BoZ_Tele" do
+            if current_object.spawn_sequence == 1 then
+               current_object.detach()
+               current_object.set_shape(cylinder, 28, 20, 20)
+               current_object.attach_to(current_player.biped, 0, 0, 0, relative)
+               current_player.object[3] = current_object
+            end
          end
       end
-   end
-end
-
-if global.number[10] == 1 then
-   global.timer[3].set_rate(-100%)
-   if global.timer[3].is_zero() then
-      for each object with label "BoZ_Tele_Pin" do
-         if current_object.spawn_sequence == global.number[11] then
-            global.object[8] = current_object.place_at_me(block_1x1_flat, none, none, 0, 0, 0, none)
-            global.object[8].attach_to(current_object, 10, 0, 0, relative)
-            global.object[8].detach()
-            global.object[7].attach_to(global.object[8], 0, 0, 0, relative)
-            global.object[7].detach()
-         end
-      end
-      global.number[11] += 1
-      if global.number[11] > 29 then
-         global.number[11] = 0
-      end
-      global.timer[3].reset()
    end
 end
 
 for each player do
    script_widget[0].set_visibility(current_player, false)
+   if current_player.number[1] != 1 then
+      current_player.biped.set_waypoint_icon(none)
+   end
    current_player.number[2] = 0
    if script_option[2] == 1 and global.object[0].shape_contains(current_player.biped) and current_player.number[0] == 0 then 
       current_player.number[2] = 1
       current_player.apply_traits(script_traits[2])
+      if current_player.number[1] != 1 then
+         current_player.biped.set_waypoint_icon(bullseye)
+      end
       script_widget[0].set_visibility(current_player, true)
    end
 end
@@ -515,6 +511,15 @@ if global.number[8] > 0 then
             current_player.biped.set_waypoint_icon(none)
             current_player.number[6] = 0
          end
+      end
+   end
+end
+
+if global.number[8] == -1 then
+   for each player do 
+      if current_player.number[0] == 0 and current_player.number[1] != 1 then
+         current_player.apply_traits(script_traits[3])
+         current_player.biped.set_waypoint_icon(bullseye)
       end
    end
 end
