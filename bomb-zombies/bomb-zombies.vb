@@ -48,7 +48,7 @@ declare object.timer[1] = script_option[13]
 declare object.player[0] with network priority low
 
 function check_distance()
-   if global.number[7] == 0 then
+   if global.number[7] == 0 and global.number[6] <= 75 then
       global.number[6] += 1
       global.object[4].attach_to(global.object[5], 0, 0, -2, relative)
       global.object[4].detach()

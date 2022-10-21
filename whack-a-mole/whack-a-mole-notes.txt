@@ -1,0 +1,18 @@
+global.number[0] - checks that whacking moles has begun
+global.number[2] - used for randomized time between jumps
+global.number[3] - used for randomized jump height
+global.number[5]
+global.number[6]
+global.number[10]
+
+global.object[3 - 6 / 8 - 11]
+global.object[3]: used for current mole
+global.object[4]: used for setting up reference from mole to its molehill
+
+player.number[2] & beyond
+player.number[2]: used to define if player is mole or not
+
+all of global.team[]
+
+
+make aboveGround markers
