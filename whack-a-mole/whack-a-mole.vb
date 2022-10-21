@@ -59,7 +59,7 @@ declare object.object[1] with network priority low
 declare object.object[2] with network priority low
 declare object.object[3] with network priority local
 declare object.player[0] with network priority low
-declare object.timer[2] = 3
+declare object.timer[2] = 5
 declare object.timer[3] = 3
 
 function trigger_0()
@@ -124,7 +124,7 @@ end
 for each player do
    if current_player.number[2] == 1 then
       global.object[5] = current_player.biped
-      if not global.object[5].has_forge_label("WAM_Mole") then
+      if not global.object[5].has_forge_label("WAM_Mole") or global.object[5] == no_object then
          for each object with label "WAM_Mole" do
             if current_object.player[0] == no_player then
                current_player.set_biped(current_object)
@@ -138,7 +138,9 @@ for each player do
       current_player.timer[1].set_rate(-100%)
       if current_player.timer[1].is_zero() then
          global.object[3] = current_player.biped
-         global.number[3] = rand(3)
+         global.number[3] = rand(5)
+         global.object[3].number[3] = 3
+         global.object[3].set_waypoint_icon(territory_a, global.object[3].number[0])
          trigger_3()
          current_player.timer[1].reset()
       end
@@ -147,6 +149,8 @@ end
 
 on object death: do
    if killed_object.has_forge_label("WAM_Mole") then
+      global.number[5] = killed_object.number[0]
+      killer_player.score += killed_object.number[0]
       killed_object.delete()
    end
 end
@@ -164,24 +168,25 @@ for each object with label "WAM_Molehill" do
 end
 
 if global.timer[0].is_zero() then
-   global.number[3] = rand(6)
+   global.number[3] = rand(8)
    global.object[3] = get_random_object("WAM_Mole", global.object[3])
    if global.number[3] < 2 then
       global.number[3] = 2
    end
-   if global.number[3] >= 5 then
+   if global.number[3] >= 6 then
       global.object[3].number[0] = 1
    end
-   if global.number[3] <= 4 then
+   if global.number[3] <= 5 then
       global.object[3].number[0] = 2
    end
-   if global.number[3] <= 2 then
-      global.object[3].number[0] = 3
+   if global.number[3] <= 3 then
+      global.number[3] = 3
+      global.object[3].number[0] = 4
    end
    global.object[3].set_waypoint_icon(territory_a, global.object[3].number[0])
    trigger_3()
    global.object[3].timer[2].set_rate(-100%)
-   global.number[2] = rand(10)
+   global.number[2] = rand(7)
    if global.number[2] == 0 then
       global.number[2] = 1
    end
@@ -207,10 +212,10 @@ for each object with label "WAM_Mole" do
 end
 
 for each player do
-   if current_player.is_elite() then 
+   if current_player.number[2] == 1 then 
       current_player.set_loadout_palette(elite_tier_1)
    end
-   if not current_player.is_elite() then 
+   if current_player.number[2] == 0 then
       current_player.set_loadout_palette(spartan_tier_1)
    end
 end

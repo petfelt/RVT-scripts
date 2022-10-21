@@ -1,7 +1,7 @@
 global.number[0] - checks that whacking moles has begun
 global.number[2] - used for randomized time between jumps
 global.number[3] - used for randomized jump height
-global.number[5]
+global.number[5] - used as TEMP VAR.
 global.number[6]
 global.number[10]
 
@@ -14,5 +14,11 @@ player.number[2]: used to define if player is mole or not
 
 all of global.team[]
 
+move aboveGround marker slightly lower maybe?
+Look at ggQuarantine to see how zombie points are acquired. (solved)
 
-make aboveGround markers
+build some walls to block players underneath grass.
+
+Fix player as mole not working.
+
+Make moles random bipeds on spawn :)
