@@ -18,6 +18,17 @@ move aboveGround marker slightly lower maybe?
 Look at ggQuarantine to see how zombie points are acquired. (solved)
 
 build some walls to block players underneath grass.
+ - Test to see if scaled up jump thru shield will block all projectiles.
+
+Make grass texture smaller
+ - Use multiple tin cups.
+
+Attach mole kill jump heights to respective portions. Set up score settings.
+
+Mole Numbers:
+ - 0: determine score given
+ - 1: determine if went above ground, then back underground.
+
 
 Fix player as mole not working.
 
