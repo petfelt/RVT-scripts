@@ -231,7 +231,8 @@ if game.teams_enabled == 0 then
       current_object.set_waypoint_visibility(everyone)
       if current_object.spawn_sequence == 0 then
          current_object.set_waypoint_text("JOIN THE HUNTERS")
-      alt
+      end
+      if current_object.spawn_sequence != 0 then
          current_object.set_waypoint_text("JOIN THE MOLES")
       end
       for each player do
