@@ -176,6 +176,9 @@ for each player do
    script_widget[0].set_text("Safe Haven - %s", global.timer[0])
    script_widget[0].set_visibility(current_player, false)
    script_widget[1].set_text("T-BAG TO DROP BOMBS")
+   if current_player.number[1] == 1 then
+      script_widget[1].set_visibility(current_player, true)
+   end
 end
 
 for each player do
@@ -529,7 +532,6 @@ if global.number[8] > 0 then
             end
             if current_player.number[6] == 0 and current_player.number[0] == 1 then
                game.show_message_to(current_player, timer_beep, "Humans revealed")
-               script_widget[1].set_visibility(current_player, true)
             end
             current_player.number[6] = 1
          end
@@ -537,9 +539,6 @@ if global.number[8] > 0 then
             if current_player.number[0] == 0 then
                game.show_message_to(current_player, timer_beep, "Location hidden")
                current_player.biped.set_waypoint_icon(none)
-            end
-            if current_player.number[0] == 1 then
-               script_widget[1].set_visibility(current_player, false)
             end
             current_player.number[6] = 0
          end
