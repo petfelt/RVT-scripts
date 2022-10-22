@@ -15,15 +15,12 @@ player.number[2]: used to define if player is mole or not
 all of global.team[]
 
 move aboveGround marker slightly lower maybe?
-Look at ggQuarantine to see how zombie points are acquired. (solved)
 
-build some walls to block players underneath grass.
+build some walls to block players shooting underneath grass.
  - Test to see if scaled up jump thru shield will block all projectiles.
 
 Make grass texture smaller
  - Use multiple tin cups.
-
-Attach mole kill jump heights to respective portions. Set up score settings.
 
 Mole Numbers:
  - 0: determine score given
@@ -32,4 +29,8 @@ Mole Numbers:
 
 Fix player as mole not working.
 
-Make moles random bipeds on spawn :)
+Implement feature where weapons swap around? Maybe after 45 seconds, weapon swap?
+ - Have list of possible weapons
+ - Option to have them be random, easier-to-harder, harder-to-easier, or off.
+
+Implement feature to increase health of CPU moles over time?

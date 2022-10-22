@@ -121,6 +121,9 @@ for each player do
          current_player.timer[1].reset()
       end
    end
+   if current_player.number[2] == 0 then
+      current_player.apply_traits(script_traits[2])
+   end
 end
 
 on object death: do
