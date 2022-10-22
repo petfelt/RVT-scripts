@@ -175,6 +175,7 @@ end
 for each player do
    script_widget[0].set_text("Safe Haven - %s", global.timer[0])
    script_widget[0].set_visibility(current_player, false)
+   script_widget[1].set_text("T-BAG TO DROP BOMBS")
 end
 
 for each player do
@@ -194,6 +195,7 @@ end
 for each player do
    if current_player.number[3] == 0 and current_player.timer[1].is_zero() then 
       game.show_message_to(current_player, announce_infection, "Bomber Zombies")
+      game.show_message_to(current_player, none, "v0.95. Created by mini nt")
       for each object with label "BoZ_Floor" do
          global.object[6] = current_object.place_at_me(flag_stand, none, none, 0, 0, 0, none)
          global.object[6].attach_to(current_object, 0, 0, 0, relative)
@@ -222,7 +224,7 @@ for each player do
    if global.object[3] != no_object and current_player.number[3] == 1 then 
       if current_player.number[0] == 1 then
          current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, "BoZ_NO_USE_Zkillcheck", none, 0, 0, 0, none)
-         current_player.object[0].set_shape(cylinder, 27, 0, 1000)
+         current_player.object[0].set_shape(cylinder, 30, 0, 1000)
       end
       if current_player.number[0] != 1 then
          current_player.object[0] = global.object[3].place_at_me(sound_emitter_alarm_2, none, none, 0, 0, 0, none)
@@ -248,7 +250,6 @@ end
 
 for each player do
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
-      current_player.object[0].detach()
       current_player.number[1] = 0
       global.player[0] = current_player
       global.player[1] = no_player
@@ -279,7 +280,7 @@ for each player do
          for each object with label "BoZ_NO_USE_Zkillcheck" do
             global.player[2] = current_object.player[0]
             if global.player[2].number[0] == 1 then
-               if current_object.shape_contains(current_player.object[0]) and global.player[2] != current_player then
+               if current_object.shape_contains(global.player[0].biped) and global.player[2] != current_player then
                   global.player[2].score += script_option[12]
                   global.player[2].script_stat[1] += 1
                end
@@ -294,7 +295,6 @@ for each player do
          send_incident(inf_new_infection, global.team[1], global.player[0])
          current_player.number[0] = 1
       end
-      current_player.object[0].delete()
    end
 end
 
@@ -398,9 +398,9 @@ if script_option[1] == 1 then
                current_player.biped.set_waypoint_icon(skull)
                current_player.biped.set_waypoint_priority(high)
                current_player.biped.remove_weapon(primary, true)
-               current_player.biped.add_weapon(plasma_repeater, primary)
+               current_player.biped.add_weapon(concussion_rifle, primary)
                current_player.biped.remove_weapon(secondary, true)
-               current_player.biped.add_weapon(concussion_rifle, secondary)
+               current_player.biped.add_weapon(plasma_repeater, secondary)
                for each object with label "BoZ_Map_Has_Target_Locator" do
                   current_player.biped.remove_weapon(secondary, true)
                   current_player.biped.add_weapon(target_locator, secondary)
@@ -529,6 +529,7 @@ if global.number[8] > 0 then
             end
             if current_player.number[6] == 0 and current_player.number[0] == 1 then
                game.show_message_to(current_player, timer_beep, "Humans revealed")
+               script_widget[1].set_visibility(current_player, true)
             end
             current_player.number[6] = 1
          end
@@ -536,6 +537,9 @@ if global.number[8] > 0 then
             if current_player.number[0] == 0 then
                game.show_message_to(current_player, timer_beep, "Location hidden")
                current_player.biped.set_waypoint_icon(none)
+            end
+            if current_player.number[0] == 1 then
+               script_widget[1].set_visibility(current_player, false)
             end
             current_player.number[6] = 0
          end
