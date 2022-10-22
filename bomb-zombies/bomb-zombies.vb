@@ -175,8 +175,9 @@ end
 for each player do
    script_widget[0].set_text("Safe Haven - %s", global.timer[0])
    script_widget[0].set_visibility(current_player, false)
-   script_widget[1].set_text("T-BAG TO DROP BOMBS")
-   if current_player.number[1] == 1 then
+   script_widget[1].set_text("T-BAG TO\nDROP BOMBS")
+   script_widget[2].set_text("PROJECTILES\nTELEPORT")
+   if current_player.number[0] == 1 then
       script_widget[1].set_visibility(current_player, true)
    end
 end
@@ -197,8 +198,10 @@ end
 
 for each player do
    if current_player.number[3] == 0 and current_player.timer[1].is_zero() then 
-      game.show_message_to(current_player, announce_infection, "Bomber Zombies")
+      script_widget[1].set_visibility(current_player, false)
+      script_widget[2].set_visibility(current_player, false)
       game.show_message_to(current_player, none, "v0.95. Created by mini nt")
+      game.show_message_to(current_player, announce_infection, "Bomber Zombies")
       for each object with label "BoZ_Floor" do
          global.object[6] = current_object.place_at_me(flag_stand, none, none, 0, 0, 0, none)
          global.object[6].attach_to(current_object, 0, 0, 0, relative)
@@ -429,6 +432,7 @@ end
 for each player do
    if current_player.number[1] == 1 then 
       current_player.apply_traits(script_traits[1])
+      script_widget[2].set_visibility(current_player, true)
       if current_player.object[3] == no_object then
          for each object with label "BoZ_Tele" do
             if current_object.spawn_sequence == 1 then
