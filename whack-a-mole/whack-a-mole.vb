@@ -5,7 +5,7 @@ declare global.number[2] with network priority local
 declare global.number[3] with network priority local
 declare global.number[4] with network priority local
 declare global.number[5] with network priority low
-declare global.number[6] with network priority local
+declare global.number[6] with network priority low
 declare global.number[7] with network priority low
 declare global.number[8] with network priority low
 declare global.number[9] with network priority low
@@ -40,12 +40,14 @@ declare global.team[5] with network priority low
 declare global.team[6] with network priority low
 declare global.team[7] with network priority low
 declare global.timer[0] = 15
+declare global.timer[1] = 30
 declare player.number[0] with network priority local
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low
+declare player.number[3] with network priority low
 declare player.object[0] with network priority low
 declare player.timer[0] = 5
-declare player.timer[1] = 5
+declare player.timer[1] = 1
 declare object.number[0] with network priority local
 declare object.number[1] with network priority local
 declare object.number[2] with network priority low
@@ -58,7 +60,6 @@ declare object.object[0] with network priority low
 declare object.object[1] with network priority low
 declare object.object[2] with network priority low
 declare object.object[3] with network priority local
-declare object.player[0] with network priority low
 declare object.timer[3] = 3
 
 function trigger_0()
@@ -111,14 +112,18 @@ end
 for each player do
    if current_player.number[2] == 1 then
       current_player.apply_traits(script_traits[1])
-      current_player.timer[1].set_rate(-100%)
-      if current_player.timer[1].is_zero() then
+      current_player.timer[0].set_rate(-100%)
+      if current_player.timer[0].is_zero() then
          global.object[3] = current_player.biped
          global.number[3] = rand(5)
-         global.object[3].number[3] = 3
+         global.object[3].number[3] = script_option[10]
+         global.object[3].number[0] = script_option[10]
+         if current_player.number[0] == 1 then
+            global.object[3].number[0] += script_option[3]
+         end
          global.object[3].set_waypoint_icon(territory_a, global.object[3].number[0])
          trigger_3()
-         current_player.timer[1].reset()
+         current_player.timer[0].reset()
       end
    end
    if current_player.number[2] == 0 then
@@ -134,6 +139,9 @@ on object death: do
 end
 
 for each object with label "WAM_Molehill" do
+   if current_object.spawn_sequence < script_option[1] then
+      current_object.delete()
+   end
    global.timer[0].set_rate(-300%)
    if current_object.object[0] == no_object then
       global.number[5] = rand(15)
@@ -172,8 +180,8 @@ end
 if global.timer[0].is_zero() then
    global.number[3] = rand(8)
    global.object[3] = get_random_object("WAM_Mole", global.object[3])
-   if global.number[3] < 2 then
-      global.number[3] = 2
+   if global.number[3] < 3 then
+      global.number[3] = 3
    end
    if global.number[3] >= 6 then
       global.object[3].number[0] = script_option[13]
@@ -182,7 +190,6 @@ if global.timer[0].is_zero() then
       global.object[3].number[0] = script_option[12]
    end
    if global.number[3] <= 3 then
-      global.number[3] = 3
       global.object[3].number[0] = script_option[11]
    end
    global.object[3].set_waypoint_icon(territory_a, global.object[3].number[0])
@@ -208,10 +215,24 @@ for each object with label "WAM_AboveGround" do
          end
       end
    end
+   for each player do
+      if current_player.number[2] == 1 then
+         current_player.timer[1].set_rate(200%)
+         if global.object[5].shape_contains(current_object) then
+            current_object.set_waypoint_visibility(everyone)
+            if current_player.timer[1].is_zero() then
+               current_player.score += script_option[11]
+               current_player.timer[1].reset()
+            end
+         alt
+            current_object.set_waypoint_visibility(no_one)
+         end
+      end
+   end
 end
 
 for each object with label "WAM_Mole" do
-   if current_object.number[1] == 2 and current_object.player[0] == no_player then
+   if current_object.number[1] == 2 then
       current_object.delete()
    end
 end
@@ -233,33 +254,31 @@ if game.teams_enabled == 0 then
       current_object.set_waypoint_range(0, 15)
       current_object.set_waypoint_visibility(everyone)
       if current_object.spawn_sequence == 0 then
-         current_object.set_waypoint_text("JOIN THE HUNTERS")
+         current_object.set_waypoint_text("GO HUNTING")
       end
       if current_object.spawn_sequence != 0 then
-         current_object.set_waypoint_text("JOIN THE MOLES")
+         current_object.set_waypoint_text("BECOME A MOLE")
       end
       for each player do
          global.number[5] = current_object.get_distance_to(current_player.biped)
-         if global.number[5] < 15 then
+         if global.number[5] <= 30 then
             current_object.set_shape_visibility(mod_player, current_player, 1)
 
          end
-         if global.number[5] > 15 then
+         if global.number[5] > 30 then
             current_object.set_shape_visibility(mod_player, current_player, 0)
          end
          if current_object.shape_contains(current_player.biped) then
-            if current_object.team != current_player.team then
-               current_player.team = current_object.team
-               if current_player.team == current_object.team then
-                  current_player.biped.kill(false)
-                  if current_player.number[2] == 0 then
-                     current_player.team = team[1]
-                     current_player.number[2] = 1
-                  alt
-                     current_player.number[2] = 0
-                  end
-               end
+            if current_object.spawn_sequence != 0 then
+               current_player.team = team[1]
+               current_player.number[2] = 1
             end
+            if current_object.spawn_sequence == 0 then
+               current_player.team = team[0]
+               current_player.number[2] = 0
+            end
+            current_player.biped.kill(false)
+            current_player.biped.delete()
          end
       end
    end
@@ -275,23 +294,27 @@ for each player do
 end
 
 for each player do
-   if game.score_to_win != 0 and game.teams_enabled == 1 then 
-      current_player.set_round_card_title("Kill players on the enemy team.\r\n%n points to win.", game.score_to_win)
+   if game.score_to_win != 0 then 
+      current_player.set_round_card_title("Hunters score points by killing moles.\nMoles score points by jumping.\n%n points to win.", game.score_to_win)
    end
-   if game.score_to_win != 0 and game.teams_enabled == 0 then 
-      current_player.set_round_card_title("Score points by killing other players.\r\n%n points to win.", game.score_to_win)
-   end
-   if game.score_to_win == 0 and game.teams_enabled == 1 then 
-      current_player.set_round_card_title("Kill players on the enemy team.")
-   end
-   if game.score_to_win == 0 and game.teams_enabled == 0 then 
-      current_player.set_round_card_title("Score points by killing other players.")
+   if game.score_to_win == 0 then 
+      current_player.set_round_card_title("Hunters score points by killing moles.\nMoles score points by jumping.")
    end
 end
 
 for each player do
    current_player.timer[0].set_rate(-100%)
+   if current_player.timer[0].is_zero() then
+      script_widget[0].set_visibility(current_player, false)
+      script_widget[1].set_visibility(current_player, false)
+      script_widget[2].set_visibility(current_player, false)
+      if script_option[8] > 0 then
+         script_widget[2].set_visibility(current_player, true)
+      end
+   end
    if current_player.number[1] == 0 and current_player.timer[0].is_zero() then 
+      script_widget[0].set_text("You are a HUNTER: Shoot the moles!")
+      script_widget[1].set_text("You are a pesky MOLE: Jump and avoid gunfire!")
       if game.teams_enabled == 0 then
          current_player.team = team[0]
          current_player.number[2] = 0
@@ -299,10 +322,28 @@ for each player do
             current_object.set_shape_visibility(no_one)
          end
       end
-      send_incident(custom_game_start, current_player, no_player)
-      send_incident(game_start_slayer, current_player, no_player)
-      game.show_message_to(current_player, none, "Created by Weesee! Release V1.05a")
+      send_incident(action_sack_game_start, current_player, no_player)
+      game.show_message_to(current_player, none, "Idea - Sofasleeper5\nAnvilEditor - Weesee! Release V1.05a")
+      game.show_message_to(current_player, none, "Whack-A-Mole\nv0.97 - Created by mini nt\n")
       current_player.number[1] = 1
+      current_player.timer[0].reset()
+   end
+   if current_player.number[1] == 1 and current_player.timer[0].is_zero() then
+      if current_player.number[2] == 0 then
+         script_widget[0].set_visibility(current_player, true)
+      end
+      if current_player.number[2] != 0 then
+         script_widget[1].set_visibility(current_player, true)
+      end
+      current_player.number[1] = 2
+      current_player.timer[0].reset()
+   end
+end
+
+for each player do
+   script_widget[2].set_text("WEAPON SWAP: %n", global.timer[1])
+   if global.timer[1].is_zero() then
+      global.timer[1].reset()
    end
 end
 
@@ -332,26 +373,20 @@ for each player do
          do
             global.number[1] %= 5
             if global.number[1] == 0 then 
-               global.player[0].score += script_option[10]
+               global.player[0].score += script_option[2]
             end
          end
          if current_player.number[0] == 1 then 
-            global.player[0].score += script_option[4]
-         end
-         if global.number[4] == 1 then 
-            global.player[0].score += script_option[6]
-         end
-         if global.number[4] == 2 then 
-            global.player[0].score += script_option[7]
+            global.player[0].score += script_option[3]
          end
          if global.number[4] == 3 then 
-            global.player[0].score += script_option[8]
+            global.player[0].score += script_option[5]
          end
          if global.number[4] == 4 then 
-            global.player[0].score += script_option[9]
+            global.player[0].score += script_option[6]
          end
          if global.number[4] == 5 then 
-            global.player[0].score += script_option[5]
+            global.player[0].score += script_option[4]
          end
       end
    end
@@ -359,14 +394,7 @@ end
 
 for each player do
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) and not current_player.killer_type_is(kill) and not current_player.killer_type_is(betrayal) then 
-      current_player.score += script_option[2]
-   end
-end
-
-for each player do
-   if current_player.killer_type_is(betrayal) then 
-      global.player[0] = current_player.try_get_killer()
-      global.player[0].score += script_option[3]
+      current_player.score += script_option[1]
    end
 end
 
