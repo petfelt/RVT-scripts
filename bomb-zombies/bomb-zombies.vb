@@ -46,6 +46,7 @@ declare object.number[0] with network priority low
 declare object.timer[0] = script_option[3]
 declare object.timer[1] = script_option[13]
 declare object.player[0] with network priority low
+declare object.object[0] with network priority local
 
 function check_distance()
    if global.number[7] == 0 and global.number[6] <= 75 then
@@ -255,6 +256,12 @@ for each player do
 end
 
 for each player do
+   global.object[7] = current_player.biped
+   if global.object[7] != no_object then
+      global.object[3] = current_player.object[0]
+      global.object[3] = global.object[3].object[0]
+      global.object[3] = current_player.biped
+   end
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
       current_player.number[1] = 0
       global.player[0] = current_player
@@ -286,7 +293,7 @@ for each player do
          for each object with label "BoZ_NO_USE_Zkillcheck" do
             global.player[2] = current_object.player[0]
             if global.player[2].number[0] == 1 then
-               if current_object.shape_contains(global.player[0].biped) and global.player[2] != current_player then
+               if current_object.shape_contains(global.object[3]) and global.player[2] != global.player[0] then
                   global.player[2].score += script_option[12]
                   global.player[2].script_stat[1] += 1
                end
