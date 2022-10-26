@@ -50,6 +50,10 @@ declare player.timer[0] = 1
 declare player.timer[1] = 5
 declare player.timer[2] = 1
 declare player.timer[3] = 3
+declare player.object[0] with network priority local
+declare player.object[1] with network priority local
+declare player.object[2] with network priority local
+declare player.object[3] with network priority local
 declare object.number[0] with network priority low
 declare object.number[1] with network priority local
 declare object.number[2] with network priority local
@@ -62,6 +66,8 @@ declare object.object[0] with network priority low
 declare object.object[1] with network priority local
 declare object.object[2] with network priority low
 declare object.object[3] with network priority local
+alias local_test_obj = object.object[1] 
+declare object.local_test_obj with network priority local
 declare object.timer[0] = script_option[3]
 declare object.timer[2] = 3
 
@@ -104,41 +110,21 @@ function trigger_0()
    end
 end
 
-alias local_player = global.player[2]
-declare local_player with network priority local
-alias host_indicator = global.number[2]
-declare host_indicator with network priority local
-
-alias temp_obj0 = global.object[2]
-declare temp_obj0 with network priority local
-
-alias host_existance_check = global.timer[2]
-declare host_existance_check = 11
-
-alias local_test_obj = object.object[1] 
-declare object.local_test_obj with network priority local
-
 do
-   host_indicator = 1
-   host_existance_check.set_rate(-100%)
-end
--- ## OPTIONAL FOR DEBUGGING
-if host_existance_check.is_zero() and local_player == no_player then
-   host_indicator = 2
-end
-if local_player != no_player then
+   global.number[2] = 1
+   global.timer[2].set_rate(-100%)
 end
 
-alias p_biped = temp_obj0
+alias p_biped = global.object[2]
 on local: do
-   if local_player == no_player and host_indicator == 0 or not host_existance_check.is_zero() then 
+   if global.player[2] == no_player and global.number[2] == 0 or not global.timer[2].is_zero() then 
       for each player do  
          p_biped = current_player.biped
          if p_biped.local_test_obj == no_object then 
-            if host_indicator == 1 then
+            if global.number[2] == 1 then
                p_biped.local_test_obj = p_biped.place_at_me(spartan, "hosttarget", none, 0, 0, 0, none)
             end
-            if host_indicator == 0 then
+            if global.number[2] == 0 then
                p_biped.local_test_obj = p_biped.place_at_me(spartan, "clienttarget", none, 0, 0, 0, none)
             end
             p_biped.local_test_obj.set_scale(160) 
@@ -146,19 +132,19 @@ on local: do
          end
          p_biped.local_test_obj.attach_to(p_biped, 5, 0, 0, relative)
          p_biped.local_test_obj.detach()
-         temp_obj0 = current_player.get_crosshair_target()
-         if temp_obj0 != no_object then 
-            local_player = current_player
+         global.object[2] = current_player.get_crosshair_target()
+         if global.object[2] != no_object then 
+            global.player[2] = current_player
          end
       end
    end
-   if host_indicator > 0 and local_player != no_player or host_existance_check.is_zero() then 
+   if global.number[2] > 0 and global.player[2] != no_player or global.timer[2].is_zero() then 
       for each object with label "hosttarget" do
          current_object.delete()
       end
    end
-   if local_player != no_player then 
-      if host_indicator == 0 then 
+   if global.player[2] != no_player then 
+      if global.number[2] == 0 then 
          for each object with label "clienttarget" do
             current_object.delete()
          end
@@ -166,8 +152,9 @@ on local: do
       -- /////////////////////////////////
       -- // LOCAL PLAYER CODE EXECUTION //
       -- /////////////////////////////////
-      -- local_player is our local player, have fun
+      -- global.player[2] is our local player, have fun
       -- note, this will run for each client (this includes the host)
+      
 
 
 
