@@ -34,3 +34,36 @@ Implement feature where weapons swap around? Maybe after 45 seconds, weapon swap
  - Option to have them be random, easier-to-harder, harder-to-easier, or off.
 
 Implement feature to increase health of CPU moles over time?
+
+
+Snipers:
+ - focus rifle
+ - sniper rifle
+
+mid-range:
+ - needle rifle
+ - dmr
+ - magnum
+
+automatic:
+ - assault rifle
+ - needler
+ - plasma rifle
+ - plasma repeater
+ - spiker
+ - detached machine gun turret
+ - detached plasma cannon
+
+explosives:
+ - concussion rifle
+ - fuel rod gun
+ - spartan laser
+ - grenade launcher
+ - rocket launcher
+ 
+All viable:
+ - plasma pistol
+
+player:
+number 4: current weapon number
+number 5: is set to current weapon

@@ -45,8 +45,9 @@ declare global.timer[2] = 3
 declare player.number[0] with network priority local
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low
-declare player.number[3] with network priority low
-declare player.number[4] with network priority low
+declare player.number[3] with network priority local
+declare player.number[4] with network priority local
+declare player.number[5] with network priority low
 declare player.object[0] with network priority low
 declare player.timer[0] = 5
 declare player.timer[1] = 1
@@ -963,14 +964,6 @@ for each player do
    end
 end
 
-on object death: do
-   if killed_object.has_forge_label("WAM_Mole") or killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) then
-      killer_player.score += killed_object.number[0]
-      game.show_message_to(killer_player, none, "+%n", killed_object.number[0])
-      killed_object.delete()
-   end
-end
-
 for each object with label "WAM_Molehill" do
    global.number[2] = script_option[7]
    if current_object.spawn_sequence > global.number[2] then
@@ -1125,9 +1118,9 @@ for each player do
       current_player.set_loadout_palette(spartan_tier_1)
    end
    for each object with label "WAM_ClubOnMap" do
-      current_player.number[4] = 1
+      current_player.number[5] = 1
    end
-   if current_player.number[4] > 0 then
+   if current_player.number[5] > 0 then
       global.object[6] = current_player.get_weapon(primary)
       if global.object[6].is_of_type(gravity_hammer) then
          current_player.biped.remove_weapon(primary, true)
@@ -1191,6 +1184,10 @@ end
 
 if global.timer[1].is_zero() then
    newWeapon()
+   for each player do
+      current_player.number[4] = global.number[6]
+      current_player.number[5] = 1
+   end
    global.timer[1].reset()
 end
 
@@ -1216,6 +1213,10 @@ end
 
 for each player do
    global.number[1] = 0
+   global.object[8] = current_player.biped
+   if global.object[8] != no_object then
+      global.object[8].player[0] = current_player
+   end
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
       if current_player.killer_type_is(kill) then 
          global.player[0] = current_player.try_get_killer()
@@ -1265,6 +1266,14 @@ for each player do
             end
          end
       end
+   end
+end
+
+on object death: do
+   if killed_object.has_forge_label("WAM_Mole") or killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) then
+      killer_player.score += killed_object.number[0]
+      game.show_message_to(killer_player, none, "+%n", killed_object.number[0])
+      killed_object.delete()
    end
 end
 
