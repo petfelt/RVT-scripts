@@ -1,7 +1,7 @@
 
 declare global.number[0] with network priority low
 declare global.number[1] with network priority local
-declare global.number[2] with network priority low
+declare global.number[2] with network priority local
 declare global.number[3] with network priority local
 declare global.number[4] with network priority local
 declare global.number[5] with network priority local
@@ -13,7 +13,7 @@ declare global.number[10] with network priority low
 declare global.number[11] with network priority low
 declare global.object[0] with network priority low
 declare global.object[1] with network priority local
-declare global.object[2] with network priority low
+declare global.object[2] with network priority local
 declare global.object[3] with network priority low
 declare global.object[4] with network priority low
 declare global.object[5] with network priority low
@@ -29,7 +29,7 @@ declare global.object[14] with network priority local
 declare global.object[15] with network priority low
 declare global.player[0] with network priority local
 declare global.player[1] with network priority local
-declare global.player[2] with network priority low
+declare global.player[2] with network priority local
 declare global.player[3] with network priority low
 declare global.team[0] with network priority low
 declare global.team[1] with network priority low
@@ -41,6 +41,7 @@ declare global.team[6] with network priority low
 declare global.team[7] with network priority low
 declare global.timer[0] = script_option[3]
 declare global.timer[1] = 10
+declare global.timer[2] = 11
 declare player.number[0] with network priority low
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low = 1
@@ -48,6 +49,7 @@ declare player.number[3] with network priority low
 declare player.timer[0] = 1
 declare player.timer[1] = 5
 declare player.timer[2] = 1
+declare player.timer[3] = 3
 declare object.number[0] with network priority low
 declare object.number[1] with network priority local
 declare object.number[2] with network priority local
@@ -57,7 +59,7 @@ declare object.number[5] with network priority low
 declare object.number[6] with network priority low
 declare object.number[7] with network priority low
 declare object.object[0] with network priority low
-declare object.object[1] with network priority low
+declare object.object[1] with network priority local
 declare object.object[2] with network priority low
 declare object.object[3] with network priority local
 declare object.timer[0] = script_option[3]
@@ -100,6 +102,76 @@ function trigger_0()
       end
       current_object.number[2] = 1
    end
+end
+
+alias local_player = global.player[2]
+declare local_player with network priority local
+alias host_indicator = global.number[2]
+declare host_indicator with network priority local
+
+alias temp_obj0 = global.object[2]
+declare temp_obj0 with network priority local
+
+alias host_existance_check = global.timer[2]
+declare host_existance_check = 11
+
+alias local_test_obj = object.object[1] 
+declare object.local_test_obj with network priority local
+
+do
+   host_indicator = 1
+   host_existance_check.set_rate(-100%)
+end
+-- ## OPTIONAL FOR DEBUGGING
+if host_existance_check.is_zero() and local_player == no_player then
+   host_indicator = 2
+end
+if local_player != no_player then
+end
+
+alias p_biped = temp_obj0
+on local: do
+   if local_player == no_player and host_indicator == 0 or not host_existance_check.is_zero() then 
+      for each player do  
+         p_biped = current_player.biped
+         if p_biped.local_test_obj == no_object then 
+            if host_indicator == 1 then
+               p_biped.local_test_obj = p_biped.place_at_me(spartan, "hosttarget", none, 0, 0, 0, none)
+            end
+            if host_indicator == 0 then
+               p_biped.local_test_obj = p_biped.place_at_me(spartan, "clienttarget", none, 0, 0, 0, none)
+            end
+            p_biped.local_test_obj.set_scale(160) 
+            p_biped.local_test_obj.copy_rotation_from(p_biped.local_test_obj, true)
+         end
+         p_biped.local_test_obj.attach_to(p_biped, 5, 0, 0, relative)
+         p_biped.local_test_obj.detach()
+         temp_obj0 = current_player.get_crosshair_target()
+         if temp_obj0 != no_object then 
+            local_player = current_player
+         end
+      end
+   end
+   if host_indicator > 0 and local_player != no_player or host_existance_check.is_zero() then 
+      for each object with label "hosttarget" do
+         current_object.delete()
+      end
+   end
+   if local_player != no_player then 
+      if host_indicator == 0 then 
+         for each object with label "clienttarget" do
+            current_object.delete()
+         end
+		end
+      -- /////////////////////////////////
+      -- // LOCAL PLAYER CODE EXECUTION //
+      -- /////////////////////////////////
+      -- local_player is our local player, have fun
+      -- note, this will run for each client (this includes the host)
+
+
+
+	end
 end
 
 for each player do
@@ -377,25 +449,6 @@ for each player do
    if script_option[13] == 3 then 
       current_player.set_co_op_spawning(true)
    end
-   if script_option[14] == 1 then 
-      if current_player.number[0] != 1 then 
-         current_player.biped.set_invincibility(1)
-      end
-      if current_player.number[0] == 1 then 
-         current_player.biped.set_invincibility(0)
-      end
-   end
-   if script_option[14] == 2 then 
-      if current_player.number[0] != 1 then 
-         current_player.biped.set_invincibility(0)
-      end
-      if current_player.number[0] == 1 then 
-         current_player.biped.set_invincibility(1)
-      end
-   end
-   if script_option[14] == 3 then 
-      current_player.biped.set_invincibility(1)
-   end
 end
 
 for each object with label "scale" do
@@ -516,23 +569,6 @@ for each object with label "spawner" do
       end
       if current_object.spawn_sequence == 12 then 
          current_object.object[0] = current_object.place_at_me(warthog_turret_gauss, none, never_garbage_collect, 0, 0, 0, none)
-         if current_object.team == team[1] and current_object.object[1] == no_object then 
-            current_object.object[1] = current_object.place_at_me(flag_stand, none, never_garbage_collect, 0, 0, 0, none)
-            current_object.object[2] = current_object.place_at_me(shade, none, never_garbage_collect, 0, 0, 0, none)
-            current_object.object[2].set_shape(cylinder, 10, 10, 0)
-            global.object[13] = current_object.object[2]
-            for each object do
-               if global.object[13].shape_contains(current_object) and current_object.is_of_type(shade_gun_plasma) then 
-                  current_object.delete()
-               end
-            end
-            current_object.object[2].set_scale(10)
-            current_object.object[1].set_scale(1)
-            current_object.object[2].attach_to(current_object.object[0], 0, 0, 0, relative)
-            current_object.object[2].detach()
-            current_object.object[1].attach_to(current_object.object[2], 0, 0, 0, relative)
-            current_object.object[0].attach_to(current_object.object[1], 0, 0, 0, relative)
-         end
       end
       if current_object.spawn_sequence == 13 then 
          current_object.object[0] = current_object.place_at_me(warthog_turret_rocket, none, never_garbage_collect, 0, 0, 0, none)
