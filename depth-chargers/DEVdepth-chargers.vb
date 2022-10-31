@@ -7,8 +7,8 @@ declare global.number[4] with network priority local
 declare global.number[5] with network priority local
 declare global.number[6] with network priority local
 declare global.number[7] with network priority low
-declare global.number[8] with network priority low
-declare global.number[9] with network priority low
+declare global.number[8] with network priority local
+declare global.number[9] with network priority local
 declare global.number[10] with network priority low
 declare global.number[11] with network priority low
 declare global.object[0] with network priority low
@@ -20,7 +20,7 @@ declare global.object[5] with network priority low
 declare global.object[6] with network priority low
 declare global.object[7] with network priority low
 declare global.object[8] with network priority low
-declare global.object[9] with network priority low
+declare global.object[9] with network priority local
 declare global.object[10] with network priority low
 declare global.object[11] with network priority low
 declare global.object[12] with network priority local
@@ -30,7 +30,7 @@ declare global.object[15] with network priority low
 declare global.player[0] with network priority local
 declare global.player[1] with network priority local
 declare global.player[2] with network priority local
-declare global.player[3] with network priority low
+declare global.player[3] with network priority local
 declare global.team[0] with network priority low
 declare global.team[1] with network priority low
 declare global.team[2] with network priority low
@@ -41,19 +41,23 @@ declare global.team[6] with network priority low
 declare global.team[7] with network priority low
 declare global.timer[0] = script_option[3]
 declare global.timer[1] = 10
-declare global.timer[2] = 11
+declare global.timer[2] = 12
 declare player.number[0] with network priority low
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low = 1
 declare player.number[3] with network priority low
+declare player.number[4] with network priority low
+declare player.number[5] with network priority local
+declare player.number[6] with network priority local
 declare player.timer[0] = 1
 declare player.timer[1] = 5
 declare player.timer[2] = 1
-declare player.timer[3] = 3
+declare player.timer[3] = 5
 declare player.object[0] with network priority local
 declare player.object[1] with network priority local
 declare player.object[2] with network priority local
 declare player.object[3] with network priority local
+declare player.player[0] with network priority low
 declare object.number[0] with network priority low
 declare object.number[1] with network priority local
 declare object.number[2] with network priority local
@@ -66,10 +70,31 @@ declare object.object[0] with network priority low
 declare object.object[1] with network priority local
 declare object.object[2] with network priority low
 declare object.object[3] with network priority local
-alias local_test_obj = object.object[1] 
-declare object.local_test_obj with network priority local
 declare object.timer[0] = script_option[3]
 declare object.timer[2] = 3
+
+on init: do
+   for each object with label "dc_checkpoint" do
+      current_object.number[0] = current_object.spawn_sequence
+      current_object.team = team[0]
+      current_object.set_waypoint_icon(diamond)
+      current_object.set_waypoint_text("%nm", hud_player.number[5])
+      current_object.set_waypoint_priority(high)
+      current_object.set_invincibility(1)
+      current_object.set_spawn_location_permissions(no_one)
+      current_object.set_waypoint_visibility(no_one)
+      current_object.set_shape_visibility(no_one)
+   end
+end
+
+on double host migration: do
+   for each object with label "dc_checkpoint" do
+      current_object.number[0] = current_object.spawn_sequence
+   end
+   for each player do
+      current_player.player[0] = current_player
+   end
+end
 
 function trigger_0()
    current_object.detach()
@@ -115,50 +140,13 @@ do
    global.timer[2].set_rate(-100%)
 end
 
-alias p_biped = global.object[2]
-on local: do
-   if global.player[2] == no_player and global.number[2] == 0 or not global.timer[2].is_zero() then 
-      for each player do  
-         p_biped = current_player.biped
-         if p_biped.local_test_obj == no_object then 
-            if global.number[2] == 1 then
-               p_biped.local_test_obj = p_biped.place_at_me(spartan, "hosttarget", none, 0, 0, 0, none)
-            end
-            if global.number[2] == 0 then
-               p_biped.local_test_obj = p_biped.place_at_me(spartan, "clienttarget", none, 0, 0, 0, none)
-            end
-            p_biped.local_test_obj.set_scale(160) 
-            p_biped.local_test_obj.copy_rotation_from(p_biped.local_test_obj, true)
-         end
-         p_biped.local_test_obj.attach_to(p_biped, 5, 0, 0, relative)
-         p_biped.local_test_obj.detach()
-         global.object[2] = current_player.get_crosshair_target()
-         if global.object[2] != no_object then 
-            global.player[2] = current_player
-         end
+for each object with label "dc_checkpoint" do
+   current_object.set_shape_visibility(no_one)
+   for each player do
+      if current_object.number[0] == current_player.number[4] and current_player.number[0] == 0 then 
+         current_object.set_shape_visibility(mod_player, current_player, 1)
       end
    end
-   if global.number[2] > 0 and global.player[2] != no_player or global.timer[2].is_zero() then 
-      for each object with label "hosttarget" do
-         current_object.delete()
-      end
-   end
-   if global.player[2] != no_player then 
-      if global.number[2] == 0 then 
-         for each object with label "clienttarget" do
-            current_object.delete()
-         end
-		end
-      -- /////////////////////////////////
-      -- // LOCAL PLAYER CODE EXECUTION //
-      -- /////////////////////////////////
-      -- global.player[2] is our local player, have fun
-      -- note, this will run for each client (this includes the host)
-      
-
-
-
-	end
 end
 
 for each player do
@@ -207,7 +195,9 @@ end
 
 for each player do
    script_widget[0].set_text("Safe Haven - %s", global.timer[0])
+   script_widget[1].set_text("%n\% turret damage zone", hud_player.number[6])
    script_widget[0].set_visibility(current_player, false)
+   script_widget[1].set_visibility(current_player, false)
 end
 
 for each player do
@@ -226,9 +216,9 @@ end
 
 for each player do
    if current_player.number[3] == 0 and current_player.timer[1].is_zero() then 
-      send_incident(custom_game_start, current_player, no_player)
       send_incident(infection_game_start, current_player, no_player)
       game.show_message_to(current_player, none, "Created by mini nt - v0.95       (Anvil V1.05a)")
+      game.show_message_to(current_player, none, "Depth Chargers")
       current_player.number[3] = 1
    end
 end
@@ -238,6 +228,10 @@ for each player do
    if current_player.number[0] == 1 then 
       current_player.team = team[1]
       current_player.apply_traits(script_traits[0])
+   end
+   if current_player.number[0] == 0 then
+      current_player.apply_traits(script_traits[3])
+      current_player.biped.set_waypoint_icon(bullseye)
    end
 end
 
@@ -263,9 +257,7 @@ for each player do
       end
       if current_player.killer_type_is(suicide) then 
          global.player[1].score += script_option[8]
-         if script_option[12] == 1 then 
-            global.player[0].number[0] = 1
-         end
+         global.player[0].number[0] = 1
       end
       if current_player.killer_type_is(betrayal) and global.player[0].number[0] == global.player[1].number[0] then 
          global.player[1].score += script_option[9]
@@ -340,6 +332,32 @@ if script_option[1] == 1 then
    end
 end
 
+
+for each player do
+   if current_player.biped != no_object then 
+      global.object[8] = current_player.try_get_weapon(primary)
+      global.object[9] = current_player.try_get_armor_ability()
+      for each object with label 0 do
+         if not current_object.is_of_type(spartan) and not current_object.is_of_type(elite) and not current_object.is_of_type(particle_emitter_fire) and not current_object.is_of_type(magnum) and global.object[8] != current_object and global.object[9] != current_object then 
+            global.player[3] = current_object.try_get_carrier()
+            if global.player[3] == no_player then 
+               global.number[9] = current_object.get_distance_to(current_player.biped)
+               if global.number[9] < 19 then 
+                  global.number[9] = current_object.get_speed()
+                  if global.number[9] > 70 then 
+                     current_object.set_waypoint_priority(low)
+                     current_object.set_waypoint_icon(skull)
+                     current_object.team = current_player.team
+                     current_object.set_waypoint_visibility(enemies)
+                     current_object.set_waypoint_visibility(mod_player, current_player, 1)
+                  end
+               end
+            end
+         end
+      end
+   end
+end
+
 for each player do
    if current_player.number[1] == 1 then 
       current_player.apply_traits(script_traits[1])
@@ -353,6 +371,66 @@ for each player do
       current_player.number[2] = 1
       current_player.apply_traits(script_traits[2])
       script_widget[0].set_visibility(current_player, true)
+   end
+end
+
+
+for each player do
+   script_widget[1].set_visibility(current_player, false)
+end
+
+
+for each object with label "dc_zone" do
+   for each player do
+      if current_object.shape_contains(current_player.biped) then
+         global.object[9] = current_player.try_get_vehicle()
+         script_widget[1].set_visibility(current_player, true)
+         if current_object.spawn_sequence <= 4 then
+            current_player.number[6] = 25
+            if global.object[9] != no_object then
+               current_player.apply_traits(script_traits[4])
+            end
+         end
+         if current_object.spawn_sequence == 5 then
+            current_player.number[6] = 50
+            if global.object[9] != no_object then
+               current_player.apply_traits(script_traits[5])
+            end
+         end
+         if current_object.spawn_sequence == 6 then
+            current_player.number[6] = 75
+            if global.object[9] != no_object then
+               current_player.apply_traits(script_traits[6])
+            end
+         end
+         if current_object.spawn_sequence == 7 then
+            current_player.number[6] = 100
+            if global.object[9] != no_object then
+               current_player.apply_traits(script_traits[7])
+            end
+         end
+      end
+      if current_object.spawn_sequence >= 8 then
+         if global.timer[1].is_zero() then
+            current_object.set_shape_visibility(allies)
+         end
+         script_widget[1].set_visibility(current_player, false)
+      end
+   end
+end
+
+for each object with label "dc_marker" do
+   current_object.set_waypoint_visibility(allies)
+   if current_object.spawn_sequence == 0 then
+      current_object.set_waypoint_text("ARTILLERY")
+   end
+   if current_object.spawn_sequence == 1 then
+      current_object.set_waypoint_range(0, 100)
+      current_object.set_waypoint_text("HANDHELD")
+   end
+   if current_object.spawn_sequence == 2 then
+      current_object.set_waypoint_range(0, 100)
+      current_object.set_waypoint_text("CLOSE RANGE")
    end
 end
 
@@ -417,7 +495,7 @@ for each object do
 end
 
 for each player do
-   if script_option[13] == 1 then 
+   if script_option[12] == 1 then 
       if current_player.number[0] != 1 then 
          current_player.set_co_op_spawning(true)
       end
@@ -425,7 +503,7 @@ for each player do
          current_player.set_co_op_spawning(false)
       end
    end
-   if script_option[13] == 2 then 
+   if script_option[12] == 2 then 
       if current_player.number[0] != 1 then 
          current_player.set_co_op_spawning(false)
       end
@@ -433,7 +511,7 @@ for each player do
          current_player.set_co_op_spawning(true)
       end
    end
-   if script_option[13] == 3 then 
+   if script_option[12] == 3 then 
       current_player.set_co_op_spawning(true)
    end
 end
@@ -672,7 +750,165 @@ for each object with label "bro_spawn_loc" do
    end
 end
 
+for each player do
+   global.number[10] = 0
+   if current_player.number[0] == 0 and script_option[13] > 0 then 
+      global.object[3] = no_object
+      for each object with label "dc_checkpoint" do
+         if current_object.number[0] == current_player.number[4] then 
+            global.object[3] = current_object
+            current_object.set_waypoint_visibility(mod_player, current_player, 1)
+            if current_object.shape_contains(current_player.biped) then 
+               current_object.set_waypoint_visibility(mod_player, current_player, 0)
+               global.number[10] = -1
+            end
+         end
+      end
+      if global.number[10] == -1 then 
+         current_player.score += script_option[15]
+         send_incident(checkpoint_reached_team, current_player, no_player)
+         current_player.script_stat[2] += 1
+         current_player.number[4] += 1
+         for each object with label "dc_checkpoint" do
+            if current_object.number[0] == current_player.number[4] then 
+               global.number[10] = current_player.number[4]
+            end
+         end
+         if global.number[10] == -1 then
+            current_player.number[4] = 0
+         end
+         if script_option[13] == 2 then
+            global.object[3] = get_random_object("dc_checkpoint", global.object[3])
+            current_player.number[4] = global.object[3].number[0]
+         end
+         for each object with label "dc_checkpoint" do
+            if current_object.number[0] == current_player.number[4] then
+               current_object.set_waypoint_visibility(mod_player, current_player, 1)
+            end
+         end
+      end
+   end
+end
+
 on local: do
+   if global.player[2] == no_player and global.number[2] == 0 or not global.timer[2].is_zero() then 
+      if global.object[4] == no_object then
+         for each object with label "dc_FXSpawn" do
+            global.object[4] = current_object
+         end
+      end
+      for each player do  
+         if global.object[2].object[1] == no_object then 
+            if global.number[2] == 1 then
+               global.object[2].object[1] = current_player.biped.place_at_me(spartan, "hosttarget", none, 15, 0, 0, none)
+            end
+            if global.number[2] == 0 then
+               global.object[2].object[1] = current_player.biped.place_at_me(spartan, "clienttarget", none, 15, 0, 0, none)
+            end
+            global.object[2].object[1].set_scale(160) 
+            global.object[2].object[1].copy_rotation_from(global.object[2].object[1], true)
+         end
+         global.object[2].object[1].attach_to(current_player.biped, 15, 0, 0, relative)
+         global.object[2].object[1].detach()
+         global.object[2] = current_player.get_crosshair_target()
+         if global.object[2] != no_object then 
+            global.player[2] = current_player
+            if global.object[4] == no_object then
+               global.object[4] = global.player[2].biped
+            end
+         end
+      end
+   end
+   if global.number[2] > 0 and global.player[2] != no_player or global.timer[2].is_zero() then 
+      for each object with label "hosttarget" do
+         current_object.delete()
+      end
+   end
+   if global.player[2] != no_player then 
+      if global.number[2] == 0 then 
+         for each object with label "clienttarget" do
+            current_object.delete()
+         end
+		end
+      " -- /////////////////////////////////
+      -- // LOCAL PLAYER CODE EXECUTION //
+      -- /////////////////////////////////
+      -- global.player[2] is our local player, have fun
+      -- note, this will run for each client (this includes the host)"
+
+      " -- Place all relevant FX objects, which we will then delete based on if they become a zombie (if enabled as such.)"
+
+      " -- FX:
+        -- Purple
+        -- Juicy
+        -- Next Gen
+        -- OR: --
+        -- Purple
+        -- Juicy
+        -- Pen & Ink
+        -- Green
+        -- COULD TRY: --
+        -- Purple
+        -- Juicy
+        -- Pen & Ink
+        -- Next Gen
+        -- Green
+        -- MAYBE: Green (again)
+      "
+
+      "
+        -- FINAL FX:
+         -- Juicy
+         -- Green
+         -- Green
+      "
+
+      "
+
+       -- grenade launcher range of movement begins with middle of spawn. Point them towards edge.
+      
+      "
+      if script_option[14] > 0 then
+         if global.player[2].object[0] == no_object then
+            if script_option[14] < 3 then
+               global.player[2].object[0] = global.object[4].place_at_me(fx_juicy, none, none, -5, 0, 5, none)
+               global.player[2].object[1] = global.object[4].place_at_me(fx_green, none, none, 0, 5, 5, none)
+               global.player[2].object[2] = global.object[4].place_at_me(fx_green, none, none, 0, -5, 5, none)
+            end
+            if script_option[14] > 2 then
+               global.player[2].object[0] = global.object[4].place_at_me(fx_juicy, none, none, -5, 0, 5, none)
+               global.player[2].object[1] = global.object[4].place_at_me(fx_purple, none, none, 0, 5, 5, none)
+               global.player[2].object[2] = global.object[4].place_at_me(fx_gloomy, none, none, 0, -5, 5, none)
+            end
+         end
+      end
+	end
+   for each player do
+      if current_player.number[0] == 1 then
+         if script_option[14] == 1 or script_option[14] == 3 then
+            if current_player.object[0] != no_object then
+               current_player.object[0].delete()
+               current_player.object[1].delete()
+               current_player.object[2].delete()
+            end
+         end
+      end
+   end
+   for each player do
+      global.object[7] = no_object
+      for each object with label "dc_checkpoint" do
+         if current_object.number[0] == current_player.number[4] then
+            global.object[7] = current_object
+         end
+      end
+      if current_player.number[0] == 0 then
+         current_player.number[5] = 0
+         current_player.number[5] = current_player.biped.get_distance_to(global.object[7])
+         current_player.number[5] *= 7
+         current_player.number[5] /= 23
+      end
+   end
+
    for each object with label "object_by_index" do
       if current_object.timer[3].is_zero() then 
          current_object.object[3].detach()
