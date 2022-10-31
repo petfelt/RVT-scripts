@@ -51,7 +51,7 @@ declare player.number[5] with network priority local
 declare player.number[6] with network priority local
 declare player.object[0] with network priority low
 declare player.timer[0] = 5
-declare player.timer[1] = 1
+declare player.timer[1] = 3
 declare object.number[0] with network priority local
 declare object.number[1] with network priority local
 declare object.number[2] with network priority low
@@ -208,6 +208,9 @@ for each object with label "WAM_AboveGround" do
       if global.object[5].shape_contains(current_object) then
          current_object.number[1] = 1
          current_object.set_waypoint_visibility(everyone)
+         if global.object[5].spawn_sequence == -1 then
+            current_object.number[1] = 2
+         end
       alt
          current_object.set_waypoint_visibility(no_one)
          if current_object.number[1] == 1 then
@@ -217,17 +220,20 @@ for each object with label "WAM_AboveGround" do
    end
    for each player do
       if current_player.number[2] == 1 then
-         current_player.timer[1].set_rate(200%)
-         if global.object[5].shape_contains(current_object) then
-            current_object.set_waypoint_visibility(everyone)
+         if global.object[5].shape_contains(current_player.biped) then
+            current_player.timer[1].set_rate(-300%)
+            current_player.biped.set_waypoint_visibility(everyone)
             if current_player.timer[1].is_zero() then
-               global.number[2] = script_option[12]
+               global.number[2] = script_option[14]
+               game.show_message_to(current_player, none, "+%n", global.number[2])
+               send_incident(respawn_tick_final, current_player, no_player)
                current_player.score += global.number[2]
                current_player.timer[1].reset()
             end
-         alt
-            current_object.set_waypoint_visibility(no_one)
-            current_player.apply_traits(script_traits[2])
+         end
+         if not global.object[5].shape_contains(current_player.biped) then
+            current_player.biped.set_waypoint_visibility(no_one)
+            current_player.timer[1].reset()
          end
       end
    end
@@ -236,6 +242,14 @@ end
 for each object with label "WAM_Mole" do
    if current_object.number[1] == 2 then
       current_object.delete()
+   end
+end
+
+for each player do
+   global.object[6] = no_object
+   global.object[6] = current_player.biped
+   if global.object[6] != no_object then
+      global.object[6].player[0] = current_player
    end
 end
 
@@ -257,11 +271,10 @@ if game.teams_enabled == 0 then
       end
       for each player do
          global.number[5] = current_object.get_distance_to(current_player.biped)
-         if global.number[5] <= 120 then
+         if global.number[5] <= 150 then
             current_object.set_shape_visibility(mod_player, current_player, 1)
-
          end
-         if global.number[5] > 120 then
+         if global.number[5] > 150 then
             current_object.set_shape_visibility(mod_player, current_player, 0)
          end
          if current_object.shape_contains(current_player.biped) then
@@ -364,7 +377,7 @@ if global.timer[1].is_zero() then
 end
 
 for each player do
-   if current_player.number[4] != global.number[6] then
+   if current_player.number[4] != global.number[6] and current_player.team == 0 then
       global.object[9] = no_object
       global.object[9] = current_player.biped
       if global.object[9] != no_object then
@@ -526,6 +539,7 @@ for each player do
          global.number[2] = script_option[0]
          if global.number[2] != 0 then
             game.show_message_to(current_player, none, "+%n", global.number[2])
+            send_incident(respawn_tick_final, current_player, no_player)
          end
          global.number[4] = current_player.try_get_death_damage_mod()
          global.number[1] = global.player[0].get_spree_count()
@@ -536,6 +550,7 @@ for each player do
                global.number[2] = script_option[2]
                if global.number[2] != 0 then
                   game.show_message_to(current_player, none, "+%n", global.number[2])
+                  send_incident(respawn_tick_final, current_player, no_player)
                end
             end
          end
@@ -544,6 +559,7 @@ for each player do
             global.number[2] = script_option[3]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
+               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
          if global.number[4] == 3 then 
@@ -551,6 +567,7 @@ for each player do
             global.number[2] = script_option[5]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
+               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
          if global.number[4] == 4 then 
@@ -558,6 +575,7 @@ for each player do
             global.number[2] = script_option[6]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
+               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
          if global.number[4] == 5 then 
@@ -565,6 +583,7 @@ for each player do
             global.number[2] = script_option[4]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
+               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
       end
@@ -573,8 +592,16 @@ end
 
 on object death: do
    if killed_object.has_forge_label("WAM_Mole") or killed_object.is_of_type(spartan) or killed_object.is_of_type(elite) then
-      killer_player.score += killed_object.number[0]
-      game.show_message_to(killer_player, none, "+%n", killed_object.number[0])
+      if killer_player != killed_object.player[0] then
+         killer_player.score += killed_object.number[0]
+         game.show_message_to(killer_player, none, "+%n", killed_object.number[0])
+         send_incident(respawn_tick_final, current_player, no_player)
+      end
+      global.player[0] = no_player
+      global.player[0] = killed_object.player[0]
+      if global.player[0] != no_player then
+         global.player[0].number[4] = -1
+      end
       killed_object.delete()
    end
 end
