@@ -290,19 +290,6 @@ for each player do
    if current_player.number[2] == 0 then
       current_player.set_loadout_palette(spartan_tier_1)
    end
-   if current_player.number[6] == 0 then
-      global.object[6] = current_player.get_weapon(primary)
-      if global.object[6].is_of_type(gravity_hammer) then
-         current_player.number[6] = 1
-      end
-      global.object[6] = current_player.get_weapon(secondary)
-      if global.object[6].is_of_type(gravity_hammer) then
-         current_player.number[6] = 1
-      end
-      for each object with label "WAM_ClubOnMap" do
-         current_player.number[6] = 2
-      end
-   end
 end
 
 for each player do
@@ -384,12 +371,6 @@ for each player do
          current_player.biped.remove_weapon(primary, true)
          current_player.biped.remove_weapon(secondary, true)
          current_player.number[4] = global.number[6]
-         if current_player.number[6] == 1 then
-            current_player.biped.add_weapon(gravity_hammer, force)
-         end
-         if current_player.number[6] >= 2 then
-            current_player.biped.add_weapon(golf_club, force)
-         end
          if script_option[9] <= 2 then
             if current_player.number[4] <= 0 then
                current_player.biped.add_weapon(sniper_rifle, force)
