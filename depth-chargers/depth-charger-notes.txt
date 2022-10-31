@@ -1,0 +1,74 @@
+Label fast artillery vs. bounce-shot & handheld region. (Not necessarily necessary - double check)
+ - Add lines to show where to shoot angled line, based on range. (Might not need - check)
+
+Place appropriate number of turrets. (DONE)
+
+Place checkpoints for humans. (DONE)
+ - Checkpoints could go in random order, or in order? See if we can get a user setting here. (DONE)
+
+
+Apply player trait to do more dmg when holding grenade launcher? (FIXED - Now dmg change only applied when in vehicles in zone.)
+
+
+Add zones for different amounts of damage as zombie. (DONE)
+ - See why upper zombie zone is not telling player about damage amount. (DONE)
+
+Possibly track projectiles shot, keep counter of how many enter box successfully?
+(Might be expensive...worth it or not?)
+ - Add a waypoint to each projectile (DONE)
+ - Can then keep count if projectile enters a zone.
+
+
+
+RACE NOTES: (DONE)
+ - Only just started with code
+ - calculate distance
+    VARIABLE REPLACEMENTS:
+ - global_object[1]: global_object[3]
+ - current_object.number[0]: same
+ - current_player.number[0]: current_player.number[4]
+ - global.number[2]: global.number[10]
+
+ - on 7 of 12 "race_flag" in file
+	- Need a global.number[2] replacement.
+
+
+
+      " -- /////////////////////////////////
+      -- // LOCAL PLAYER CODE EXECUTION //
+      -- /////////////////////////////////
+      -- global.player[2] is our local player, have fun
+      -- note, this will run for each client (this includes the host)"
+
+      " -- Place all relevant FX objects, which we will then delete based on if they become a zombie (if enabled as such.)"
+
+      " -- FX:
+        -- Purple
+        -- Juicy
+        -- Next Gen
+        -- OR: --
+        -- Purple
+        -- Juicy
+        -- Pen & Ink
+        -- Green
+        -- COULD TRY: --
+        -- Purple
+        -- Juicy
+        -- Pen & Ink
+        -- Next Gen
+        -- Green
+        -- MAYBE: Green (again)
+      "
+
+      "
+        -- FINAL FX:
+         -- Juicy
+         -- Green
+         -- Green
+      "
+
+      "
+
+       -- grenade launcher range of movement begins with middle of spawn. Point them towards edge.
+      
+      "
