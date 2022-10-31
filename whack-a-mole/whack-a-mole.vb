@@ -1,5 +1,5 @@
 
-declare global.number[0] with network priority local
+declare global.number[0] with network priority local = script_option[9]
 declare global.number[1] with network priority local
 declare global.number[2] with network priority local
 declare global.number[3] with network priority local
@@ -40,18 +40,18 @@ declare global.team[5] with network priority low
 declare global.team[6] with network priority low
 declare global.team[7] with network priority low
 declare global.timer[0] = 15
-declare global.timer[1] = 30
+declare global.timer[1] = script_option[10]
 declare global.timer[2] = 3
 declare player.number[0] with network priority local
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low
 declare player.number[3] with network priority local
-declare player.number[4] with network priority local
-declare player.number[5] with network priority low
+declare player.number[4] with network priority local = -1
+declare player.number[5] with network priority local
+declare player.number[6] with network priority local
 declare player.object[0] with network priority low
 declare player.timer[0] = 5
 declare player.timer[1] = 1
-declare player.timer[2] = 30
 declare object.number[0] with network priority local
 declare object.number[1] with network priority local
 declare object.number[2] with network priority low
@@ -106,837 +106,10 @@ function trigger_0()
    end
 end
 
-function checkDetachedWeapons()
-end
-
-function setWeapon()
-   global.number[2] = script_option[8]
-   for each player do
-      if global.number[2] != 0 and current_player.number[2] == 0 then
-         global.number[2] = script_option[9]
-         current_player.biped.remove_weapon(secondary, true)
-         global.object[6] = current_player.get_weapon(primary)
-         if global.number[2] == 0 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(assault_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(needler) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needler, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(plasma_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(plasma_repeater) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(spiker) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spiker, force)
-               end
-            end
-            if global.number[6] == 5 then
-               if not global.object[6].is_of_type(detached_machine_gun_turret) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-            end
-            if global.number[6] == 6 then
-               if not global.object[6].is_of_type(detached_plasma_cannon) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-            end
-            if global.number[6] == 7 then
-               if not global.object[6].is_of_type(sniper_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-            end
-            if global.number[6] == 8 then
-               if not global.object[6].is_of_type(focus_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-            end
-            if global.number[6] == 9 then
-               if not global.object[6].is_of_type(needle_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-            end
-            if global.number[6] == 10 then
-               if not global.object[6].is_of_type(dmr) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(dmr, force)
-               end
-            end
-            if global.number[6] == 11 then
-               if not global.object[6].is_of_type(magnum) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(magnum, force)
-               end
-            end
-            if global.number[6] == 12 then
-               if not global.object[6].is_of_type(plasma_pistol) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-            end
-            if global.number[6] == 13 then
-               if not global.object[6].is_of_type(concussion_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-            end
-            if global.number[6] == 14 then
-               if not global.object[6].is_of_type(fuel_rod_gun) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-            end
-            if global.number[6] == 15 then
-               if not global.object[6].is_of_type(spartan_laser) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-            end
-            if global.number[6] == 16 then
-               if not global.object[6].is_of_type(grenade_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-            end
-            if global.number[6] == 17 then
-               if not global.object[6].is_of_type(rocket_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-         if global.number[2] == 1 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(assault_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(needler) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needler, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(plasma_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(plasma_repeater) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(spiker) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spiker, force)
-               end
-            end
-            if global.number[6] == 5 then
-               if not global.object[6].is_of_type(detached_machine_gun_turret) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-            end
-            if global.number[6] == 6 then
-               if not global.object[6].is_of_type(detached_plasma_cannon) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-            end
-         end
-         if global.number[2] == 2 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(concussion_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(fuel_rod_gun) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(spartan_laser) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(grenade_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(rocket_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-         if global.number[2] == 3 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(sniper_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(focus_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-            end
-         end
-         if global.number[2] == 4 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(sniper_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(focus_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(needle_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(dmr) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(dmr, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(magnum) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(magnum, force)
-               end
-            end
-         end
-         if global.number[2] == 5 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(sniper_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(focus_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(needle_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(dmr) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(dmr, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(magnum) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(magnum, force)
-               end
-            end
-            if global.number[6] == 5 then
-               if not global.object[6].is_of_type(plasma_pistol) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-            end
-            if global.number[6] == 6 then
-               if not global.object[6].is_of_type(concussion_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-            end
-            if global.number[6] == 7 then
-               if not global.object[6].is_of_type(fuel_rod_gun) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-            end
-            if global.number[6] == 8 then
-               if not global.object[6].is_of_type(spartan_laser) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-            end
-            if global.number[6] == 9 then
-               if not global.object[6].is_of_type(grenade_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-            end
-            if global.number[6] == 10 then
-               if not global.object[6].is_of_type(rocket_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-         if global.number[2] == 6 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(assault_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(needler) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needler, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(plasma_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(plasma_repeater) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(spiker) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spiker, force)
-               end
-            end
-            if global.number[6] == 5 then
-               if not global.object[6].is_of_type(detached_machine_gun_turret) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-            end
-            if global.number[6] == 6 then
-               if not global.object[6].is_of_type(detached_plasma_cannon) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-            end
-            if global.number[6] == 7 then
-               if not global.object[6].is_of_type(sniper_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-            end
-            if global.number[6] == 8 then
-               if not global.object[6].is_of_type(focus_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-            end
-            if global.number[6] == 9 then
-               if not global.object[6].is_of_type(needle_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-            end
-            if global.number[6] == 10 then
-               if not global.object[6].is_of_type(dmr) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(dmr, force)
-               end
-            end
-            if global.number[6] == 11 then
-               if not global.object[6].is_of_type(magnum) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(magnum, force)
-               end
-            end
-            if global.number[6] == 12 then
-               if not global.object[6].is_of_type(plasma_pistol) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-            end
-         end
-         if global.number[2] == 0 then
-            if global.number[6] == 0 then
-               if not global.object[6].is_of_type(assault_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-            end
-            if global.number[6] == 1 then
-               if not global.object[6].is_of_type(needler) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needler, force)
-               end
-            end
-            if global.number[6] == 2 then
-               if not global.object[6].is_of_type(plasma_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-            end
-            if global.number[6] == 3 then
-               if not global.object[6].is_of_type(plasma_repeater) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-            end
-            if global.number[6] == 4 then
-               if not global.object[6].is_of_type(spiker) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spiker, force)
-               end
-            end
-            if global.number[6] == 5 then
-               if not global.object[6].is_of_type(detached_machine_gun_turret) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-            end
-            if global.number[6] == 6 then
-               if not global.object[6].is_of_type(detached_plasma_cannon) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-            end
-            if global.number[6] == 7 then
-               if not global.object[6].is_of_type(needle_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-            end
-            if global.number[6] == 8 then
-               if not global.object[6].is_of_type(dmr) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(dmr, force)
-               end
-            end
-            if global.number[6] == 9 then
-               if not global.object[6].is_of_type(magnum) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(magnum, force)
-               end
-            end
-            if global.number[6] == 10 then
-               if not global.object[6].is_of_type(plasma_pistol) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-            end
-            if global.number[6] == 11 then
-               if not global.object[6].is_of_type(concussion_rifle) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-            end
-            if global.number[6] == 12 then
-               if not global.object[6].is_of_type(fuel_rod_gun) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-            end
-            if global.number[6] == 13 then
-               if not global.object[6].is_of_type(spartan_laser) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-            end
-            if global.number[6] == 14 then
-               if not global.object[6].is_of_type(grenade_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-            end
-            if global.number[6] == 15 then
-               if not global.object[6].is_of_type(rocket_launcher) then
-                  current_player.biped.remove_weapon(primary, true)
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-      end
-   end
-end
-
-function newWeapon()
-   global.number[2] = script_option[8]
-   if global.number[2] != 0 then
-      global.number[2] = script_option[9]
-      if global.number[2] == 0 then
-         global.number[10] = rand(18)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(needler, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(spiker, force)
-               end
-               if global.number[10] == 5 then
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-               if global.number[10] == 6 then
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-               if global.number[10] == 7 then
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-               if global.number[10] == 8 then
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-               if global.number[10] == 9 then
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-               if global.number[10] == 10 then
-                  current_player.biped.add_weapon(dmr, force)
-               end
-               if global.number[10] == 11 then
-                  current_player.biped.add_weapon(magnum, force)
-               end
-               if global.number[10] == 12 then
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-               if global.number[10] == 13 then
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-               if global.number[10] == 14 then
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-               if global.number[10] == 15 then
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-               if global.number[10] == 16 then
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-               if global.number[10] == 17 then
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 1 then
-         global.number[10] = rand(7)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(needler, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(spiker, force)
-               end
-               if global.number[10] == 5 then
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-               if global.number[10] == 6 then
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 2 then
-         global.number[10] = rand(5)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 3 then
-         global.number[10] = rand(2)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 4 then
-         global.number[10] = rand(5)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(dmr, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(magnum, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 5 then
-         global.number[10] = rand(11)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] == 0 then
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(dmr, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(magnum, force)
-               end
-               if global.number[10] == 5 then
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-               if global.number[10] == 6 then
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-               if global.number[10] == 7 then
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-               if global.number[10] == 8 then
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-               if global.number[10] == 9 then
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-               if global.number[10] == 10 then
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 6 then
-         global.number[10] = rand(13)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(needler, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(spiker, force)
-               end
-               if global.number[10] == 5 then
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-               if global.number[10] == 6 then
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-               if global.number[10] == 7 then
-                  current_player.biped.add_weapon(sniper_rifle, force)
-               end
-               if global.number[10] == 8 then
-                  current_player.biped.add_weapon(focus_rifle, force)
-               end
-               if global.number[10] == 9 then
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-               if global.number[10] == 10 then
-                  current_player.biped.add_weapon(dmr, force)
-               end
-               if global.number[10] == 11 then
-                  current_player.biped.add_weapon(magnum, force)
-               end
-               if global.number[10] == 12 then
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-            end
-         end
-      end
-      if global.number[2] == 7 then
-         global.number[10] = rand(16)
-         if global.number[10] == global.number[6] then
-            newWeapon()
-         end
-         if global.number[10] != global.number[6] then
-            global.number[6] = global.number[10]
-            for each player do
-               current_player.biped.remove_weapon(primary, true)
-               game.show_message_to(current_player, timer_beep, ">>NEW WEAPON<<")
-               if global.number[10] <= 0 then
-                  current_player.biped.add_weapon(assault_rifle, force)
-               end
-               if global.number[10] == 1 then
-                  current_player.biped.add_weapon(needler, force)
-               end
-               if global.number[10] == 2 then
-                  current_player.biped.add_weapon(plasma_rifle, force)
-               end
-               if global.number[10] == 3 then
-                  current_player.biped.add_weapon(plasma_repeater, force)
-               end
-               if global.number[10] == 4 then
-                  current_player.biped.add_weapon(spiker, force)
-               end
-               if global.number[10] == 5 then
-                  current_player.biped.add_weapon(detached_machine_gun_turret, force)
-               end
-               if global.number[10] == 6 then
-                  current_player.biped.add_weapon(detached_plasma_cannon, force)
-               end
-               if global.number[10] == 7 then
-                  current_player.biped.add_weapon(needle_rifle, force)
-               end
-               if global.number[10] == 8 then
-                  current_player.biped.add_weapon(dmr, force)
-               end
-               if global.number[10] == 9 then
-                  current_player.biped.add_weapon(magnum, force)
-               end
-               if global.number[10] == 10 then
-                  current_player.biped.add_weapon(plasma_pistol, force)
-               end
-               if global.number[10] == 11 then
-                  current_player.biped.add_weapon(concussion_rifle, force)
-               end
-               if global.number[10] == 12 then
-                  current_player.biped.add_weapon(fuel_rod_gun, force)
-               end
-               if global.number[10] == 13 then
-                  current_player.biped.add_weapon(spartan_laser, force)
-               end
-               if global.number[10] == 14 then
-                  current_player.biped.add_weapon(grenade_launcher, force)
-               end
-               if global.number[10] == 15 then
-                  current_player.biped.add_weapon(rocket_launcher, force)
-               end
-            end
-         end
-      end
+function trueRandWeapon()
+   if global.number[5] == 2 and global.number[6] == global.number[7] then
+      global.number[6] = rand(global.number[0])
+      trueRandWeapon()
    end
 end
 
@@ -953,7 +126,7 @@ for each player do
       current_player.apply_traits(script_traits[1])
       global.object[3] = current_player.biped
       global.object[3].player[0] = current_player
-      global.object[3].number[0] = script_option[10]
+      global.object[3].number[0] = script_option[11]
       if current_player.number[0] == 1 then
          global.object[3].number[0] += script_option[3]
       end
@@ -1011,13 +184,13 @@ if global.timer[0].is_zero() then
       global.number[3] = 3
    end
    if global.number[3] >= 6 then
-      global.object[3].number[0] = script_option[13]
+      global.object[3].number[0] = script_option[14]
    end
    if global.number[3] <= 5 then
-      global.object[3].number[0] = script_option[12]
+      global.object[3].number[0] = script_option[13]
    end
    if global.number[3] <= 3 then
-      global.object[3].number[0] = script_option[11]
+      global.object[3].number[0] = script_option[12]
    end
    global.object[3].set_waypoint_icon(territory_a, global.object[3].number[0])
    trigger_3()
@@ -1048,7 +221,7 @@ for each object with label "WAM_AboveGround" do
          if global.object[5].shape_contains(current_object) then
             current_object.set_waypoint_visibility(everyone)
             if current_player.timer[1].is_zero() then
-               global.number[2] = script_option[11]
+               global.number[2] = script_option[12]
                current_player.score += global.number[2]
                current_player.timer[1].reset()
             end
@@ -1117,14 +290,17 @@ for each player do
    if current_player.number[2] == 0 then
       current_player.set_loadout_palette(spartan_tier_1)
    end
-   for each object with label "WAM_ClubOnMap" do
-      current_player.number[5] = 1
-   end
-   if current_player.number[5] > 0 then
+   if current_player.number[6] == 0 then
       global.object[6] = current_player.get_weapon(primary)
       if global.object[6].is_of_type(gravity_hammer) then
-         current_player.biped.remove_weapon(primary, true)
-         current_player.biped.add_weapon(golf_club, force)
+         current_player.number[6] = 1
+      end
+      global.object[6] = current_player.get_weapon(secondary)
+      if global.object[6].is_of_type(gravity_hammer) then
+         current_player.number[6] = 1
+      end
+      for each object with label "WAM_ClubOnMap" do
+         current_player.number[6] = 2
       end
    end
 end
@@ -1159,12 +335,13 @@ for each player do
             current_object.set_shape_visibility(no_one)
          end
       end
-      game.show_message_to(current_player, none, "Idea - Sofasleeper5 ||| AnvilEditor - Weesee! Release V1.05a")
       game.show_message_to(current_player, announce_slayer, "Whack-A-Mole - v0.97 - Created by mini nt")
       current_player.number[1] = 1
       current_player.timer[0].reset()
    end
    if current_player.number[1] == 1 and current_player.timer[0].is_zero() then
+      game.show_message_to(current_player, none, "Idea - Sofasleeper5  |  AnvilEditor - v1.05a - Weesee!")
+      global.timer[1].set_rate(-100%)
       if current_player.number[2] == 0 then
          script_widget[0].set_visibility(current_player, true)
       end
@@ -1177,24 +354,168 @@ for each player do
 end
 
 if not global.timer[1].is_zero() then
-   global.timer[2].set_rate(-100%)
-   global.timer[1].set_rate(-100%)
    script_widget[2].set_text("WEAPON SWAP: %n", global.timer[1])
 end
 
 if global.timer[1].is_zero() then
-   newWeapon()
+   global.number[5] = script_option[8]
+   if global.number[5] == 1 then
+      global.number[6] += 1
+      if global.number[6] >= global.number[0] then
+         global.number[6] = 0
+      end
+   end
+   if global.number[5] == 2 then
+      global.number[6] = rand(global.number[0])
+   end
    for each player do
-      current_player.number[4] = global.number[6]
-      current_player.number[5] = 1
+      global.number[7] = current_player.number[4]
+      trueRandWeapon()
    end
    global.timer[1].reset()
+   global.timer[1].set_rate(-100%)
 end
 
-if global.timer[2].is_zero() then
-   setWeapon()
-   global.timer[2].reset()
+for each player do
+   if current_player.number[4] != global.number[6] then
+      global.object[9] = no_object
+      global.object[9] = current_player.biped
+      if global.object[9] != no_object then
+         current_player.biped.remove_weapon(primary, true)
+         current_player.biped.remove_weapon(secondary, true)
+         current_player.number[4] = global.number[6]
+         if current_player.number[6] == 1 then
+            current_player.biped.add_weapon(gravity_hammer, force)
+         end
+         if current_player.number[6] >= 2 then
+            current_player.biped.add_weapon(golf_club, force)
+         end
+         if script_option[9] <= 2 then
+            if current_player.number[4] <= 0 then
+               current_player.biped.add_weapon(sniper_rifle, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(focus_rifle, force)
+            end
+         end
+         if script_option[9] == 3 then
+            if current_player.number[4] == 0 then
+               current_player.biped.add_weapon(dmr, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(needle_rifle, force)
+            end
+            if current_player.number[4] == 2 then
+               current_player.biped.add_weapon(magnum, force)
+            end
+         end
+         if script_option[9] == 4 then
+            if current_player.number[4] == 0 then
+               current_player.biped.add_weapon(rocket_launcher, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(spartan_laser, force)
+            end
+            if current_player.number[4] == 2 then
+               current_player.biped.add_weapon(fuel_rod_gun, force)
+            end
+            if current_player.number[4] == 3 then
+               current_player.biped.add_weapon(grenade_launcher, force)
+            end
+         end
+         if script_option[9] == 5 then
+            if current_player.number[4] == 0 then
+               current_player.biped.add_weapon(sniper_rifle, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(focus_rifle, force)
+            end
+            if current_player.number[4] == 2 then
+               current_player.biped.add_weapon(dmr, force)
+            end
+            if current_player.number[4] == 3 then
+               current_player.biped.add_weapon(needle_rifle, force)
+            end
+            if current_player.number[4] == 4 then
+               current_player.biped.add_weapon(magnum, force)
+            end
+         end
+         if script_option[9] == 6 then
+            if current_player.number[4] == 0 then
+               current_player.biped.add_weapon(sniper_rifle, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(focus_rifle, force)
+            end
+            if current_player.number[4] == 2 then
+               current_player.biped.add_weapon(rocket_launcher, force)
+            end
+            if current_player.number[4] == 3 then
+               current_player.biped.add_weapon(spartan_laser, force)
+            end
+            if current_player.number[4] == 4 then
+               current_player.biped.add_weapon(fuel_rod_gun, force)
+            end
+            if current_player.number[4] == 5 then
+               current_player.biped.add_weapon(grenade_launcher, force)
+            end
+         end
+         if script_option[9] == 7 then
+            if current_player.number[4] == 0 then
+               current_player.biped.add_weapon(dmr, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(needle_rifle, force)
+            end
+            if current_player.number[4] == 2 then
+               current_player.biped.add_weapon(magnum, force)
+            end
+            if current_player.number[4] == 3 then
+               current_player.biped.add_weapon(rocket_launcher, force)
+            end
+            if current_player.number[4] == 4 then
+               current_player.biped.add_weapon(spartan_laser, force)
+            end
+            if current_player.number[4] == 5 then
+               current_player.biped.add_weapon(fuel_rod_gun, force)
+            end
+            if current_player.number[4] == 6 then
+               current_player.biped.add_weapon(grenade_launcher, force)
+            end
+         end
+         if script_option[9] >= 9 then
+            if current_player.number[4] == 0 then
+               current_player.biped.add_weapon(sniper_rifle, force)
+            end
+            if current_player.number[4] == 1 then
+               current_player.biped.add_weapon(focus_rifle, force)
+            end
+            if current_player.number[4] == 2 then
+               current_player.biped.add_weapon(dmr, force)
+            end
+            if current_player.number[4] == 3 then
+               current_player.biped.add_weapon(needle_rifle, force)
+            end
+            if current_player.number[4] == 4 then
+               current_player.biped.add_weapon(magnum, force)
+            end
+            if current_player.number[4] == 5 then
+               current_player.biped.add_weapon(rocket_launcher, force)
+            end
+            if current_player.number[4] == 6 then
+               current_player.biped.add_weapon(spartan_laser, force)
+            end
+            if current_player.number[4] == 7 then
+               current_player.biped.add_weapon(fuel_rod_gun, force)
+            end
+            if current_player.number[4] >= 8 then
+               current_player.biped.add_weapon(grenade_launcher, force)
+            end
+         end
+      end
+   end
 end
+
 
 for each player do
    global.number[1] = 0
@@ -1296,11 +617,8 @@ for each object do
 end
 
 for each player do
-   if script_option[14] == 1 then 
-      current_player.set_co_op_spawning(true)
-   end
    if script_option[15] == 1 then 
-      current_player.biped.set_invincibility(1)
+      current_player.set_co_op_spawning(true)
    end
 end
 

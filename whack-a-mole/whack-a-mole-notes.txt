@@ -35,6 +35,10 @@ Implement feature where weapons swap around? Maybe after 45 seconds, weapon swap
 
 Implement feature to increase health of CPU moles over time?
 
+script_options:
+8: Weapon Order
+9: Weapon Set
+10: Weapon Change Time
 
 Snipers:
  - focus rifle
@@ -55,7 +59,7 @@ automatic:
  - detached plasma cannon
 
 explosives:
- - concussion rifle
+ - concussion rifle (NOPE)
  - fuel rod gun
  - spartan laser
  - grenade launcher
