@@ -51,7 +51,7 @@ declare player.number[5] with network priority local
 declare player.number[6] with network priority local
 declare player.object[0] with network priority low
 declare player.timer[0] = 5
-declare player.timer[1] = 3
+declare player.timer[1] = 4
 declare object.number[0] with network priority local
 declare object.number[1] with network priority local
 declare object.number[2] with network priority low
@@ -133,18 +133,18 @@ for each player do
       global.object[3].set_waypoint_icon(territory_a, global.object[3].number[0])
    end
    if current_player.number[2] == 0 then
-      current_player.apply_traits(script_traits[3])
+      current_player.apply_traits(script_traits[2])
    end
 end
 
 for each object with label "WAM_Molehill" do
-   global.number[2] = script_option[7]
+   global.number[2] = script_option[6]
    if current_object.spawn_sequence > global.number[2] then
       current_object.delete()
    end
    global.timer[0].set_rate(-300%)
    if current_object.object[0] == no_object then
-      global.number[5] = rand(15)
+      global.number[5] = rand(14)
       if global.number[5] <= 0 then
          current_object.object[0] = current_object.place_at_me(spartan, "WAM_Mole", never_garbage_collect, 0, 0, -10, carter)
       end
@@ -178,10 +178,13 @@ for each object with label "WAM_Molehill" do
 end
 
 if global.timer[0].is_zero() then
-   global.number[3] = rand(8)
+   global.number[3] = rand(9)
    global.object[3] = get_random_object("WAM_Mole", global.object[3])
    if global.number[3] < 3 then
       global.number[3] = 3
+   end
+   if global.number[3] >= 7 then
+      global.number[3] = 7
    end
    if global.number[3] >= 6 then
       global.object[3].number[0] = script_option[14]
@@ -219,21 +222,25 @@ for each object with label "WAM_AboveGround" do
       end
    end
    for each player do
-      if current_player.number[2] == 1 then
+      if current_player.number[2] == 1 and current_object.spawn_sequence == 0 then
          if global.object[5].shape_contains(current_player.biped) then
-            current_player.timer[1].set_rate(-300%)
+            current_player.biped.set_waypoint_visibility(everyone)
+         end
+      end
+      if current_player.number[2] == 1 and current_object.spawn_sequence == 1 then
+         if global.object[5].shape_contains(current_player.biped) then
+            current_player.timer[1].set_rate(-400%)
             current_player.biped.set_waypoint_visibility(everyone)
             if current_player.timer[1].is_zero() then
                global.number[2] = script_option[14]
                game.show_message_to(current_player, none, "+%n", global.number[2])
-               send_incident(respawn_tick_final, current_player, no_player)
                current_player.score += global.number[2]
                current_player.timer[1].reset()
             end
          end
          if not global.object[5].shape_contains(current_player.biped) then
             current_player.biped.set_waypoint_visibility(no_one)
-            current_player.timer[1].reset()
+            current_player.timer[1].set_rate(0%)
          end
       end
    end
@@ -250,6 +257,23 @@ for each player do
    global.object[6] = current_player.biped
    if global.object[6] != no_object then
       global.object[6].player[0] = current_player
+   end
+end
+
+for each player do
+   if current_player.number[2] == 1 then 
+      current_player.set_loadout_palette(elite_tier_1)
+      current_player.team = team[1]
+   end
+   if current_player.number[2] == 0 then
+      current_player.set_loadout_palette(spartan_tier_1)
+      current_player.team = team[0]
+   end
+end
+
+if script_option[15] == 0 then
+   for each object with label "WAM_SwapTeams" do
+      current_object.delete()
    end
 end
 
@@ -278,14 +302,13 @@ if game.teams_enabled == 0 then
             current_object.set_shape_visibility(mod_player, current_player, 0)
          end
          if current_object.shape_contains(current_player.biped) then
+            current_player.timer[0] = 10
             current_player.timer[0].reset()
             if current_object.spawn_sequence != 0 then
-               current_player.team = team[1]
                current_player.number[2] = 1
                script_widget[1].set_visibility(current_player, true)
             end
             if current_object.spawn_sequence == 0 then
-               current_player.team = team[0]
                current_player.number[2] = 0
                script_widget[0].set_visibility(current_player, true)
             end
@@ -297,26 +320,18 @@ if game.teams_enabled == 0 then
 end
 
 for each player do
-   if current_player.number[2] == 1 then 
-      current_player.set_loadout_palette(elite_tier_1)
-   end
-   if current_player.number[2] == 0 then
-      current_player.set_loadout_palette(spartan_tier_1)
-   end
-end
-
-for each player do
    if game.score_to_win != 0 then 
-      current_player.set_round_card_title("Hunters score points by killing moles.\nMoles score points by jumping.\n%n points to win.", game.score_to_win)
+      current_player.set_round_card_title("HUNTERS: Kill the moles.\n    MOLES: Jump.\n                 %n points to win.", game.score_to_win)
    end
    if game.score_to_win == 0 then 
-      current_player.set_round_card_title("Hunters score points by killing moles.\nMoles score points by jumping.")
+      current_player.set_round_card_title("HUNTERS: Kill the moles.\n\n    MOLES: Jump.")
    end
 end
 
 for each player do
    current_player.timer[0].set_rate(-100%)
    if current_player.timer[0].is_zero() then
+      script_widget[3].set_text("HUNTER")
       script_widget[0].set_visibility(current_player, false)
       script_widget[1].set_visibility(current_player, false)
       script_widget[2].set_visibility(current_player, false)
@@ -327,7 +342,7 @@ for each player do
    end
    if current_player.number[1] == 0 and current_player.timer[0].is_zero() then 
       script_widget[0].set_text("You are a HUNTER: Shoot the moles!")
-      script_widget[1].set_text("You are a pesky MOLE: Jump and avoid gunfire!")
+      script_widget[1].set_text("You are a MOLE: Jump and avoid gunfire!")
       if game.teams_enabled == 0 then
          current_player.team = team[0]
          current_player.number[2] = 0
@@ -335,18 +350,23 @@ for each player do
             current_object.set_shape_visibility(no_one)
          end
       end
-      game.show_message_to(current_player, announce_slayer, "Whack-A-Mole - v0.97 - Created by mini nt")
+      game.show_message_to(current_player, announce_slayer, "Whack-A-Mole")
       current_player.number[1] = 1
       current_player.timer[0].reset()
    end
    if current_player.number[1] == 1 and current_player.timer[0].is_zero() then
-      game.show_message_to(current_player, none, "Idea - Sofasleeper5  |  AnvilEditor - v1.05a - Weesee!")
+      game.show_message_to(current_player, none, "AnvilEditor  -  Weesee!")
+      game.show_message_to(current_player, none, "Concept  -  Sofasleeper5")
+      game.show_message_to(current_player, none, "Whack-A-Mole  (v1.0)  -  Created by mini nt")
       global.timer[1].set_rate(-100%)
+      script_widget[3].set_visibility(current_player, true)
       if current_player.number[2] == 0 then
          script_widget[0].set_visibility(current_player, true)
+         script_widget[3].set_text("HUNTER")
       end
       if current_player.number[2] != 0 then
          script_widget[1].set_visibility(current_player, true)
+         script_widget[3].set_text("MOLE")
       end
       current_player.number[1] = 2
       current_player.timer[0].reset()
@@ -359,6 +379,9 @@ end
 
 if global.timer[1].is_zero() then
    global.number[5] = script_option[8]
+   if global.number[5] == 0 then
+      global.number[6] = -1
+   end
    if global.number[5] == 1 then
       global.number[6] += 1
       if global.number[6] >= global.number[0] then
@@ -381,8 +404,8 @@ for each player do
       global.object[9] = no_object
       global.object[9] = current_player.biped
       if global.object[9] != no_object then
-         current_player.biped.remove_weapon(primary, true)
          current_player.biped.remove_weapon(secondary, true)
+         current_player.biped.remove_weapon(primary, true)
          current_player.number[4] = global.number[6]
          if script_option[9] <= 2 then
             if current_player.number[4] <= 0 then
@@ -405,7 +428,7 @@ for each player do
          end
          if script_option[9] == 4 then
             if current_player.number[4] == 0 then
-               current_player.biped.add_weapon(rocket_launcher, force)
+               current_player.biped.add_weapon(grenade_launcher, force)
             end
             if current_player.number[4] == 1 then
                current_player.biped.add_weapon(spartan_laser, force)
@@ -414,7 +437,7 @@ for each player do
                current_player.biped.add_weapon(fuel_rod_gun, force)
             end
             if current_player.number[4] == 3 then
-               current_player.biped.add_weapon(grenade_launcher, force)
+               current_player.biped.add_weapon(rocket_launcher, force)
             end
          end
          if script_option[9] == 5 then
@@ -442,7 +465,7 @@ for each player do
                current_player.biped.add_weapon(focus_rifle, force)
             end
             if current_player.number[4] == 2 then
-               current_player.biped.add_weapon(rocket_launcher, force)
+               current_player.biped.add_weapon(grenade_launcher, force)
             end
             if current_player.number[4] == 3 then
                current_player.biped.add_weapon(spartan_laser, force)
@@ -451,7 +474,7 @@ for each player do
                current_player.biped.add_weapon(fuel_rod_gun, force)
             end
             if current_player.number[4] == 5 then
-               current_player.biped.add_weapon(grenade_launcher, force)
+               current_player.biped.add_weapon(rocket_launcher, force)
             end
          end
          if script_option[9] == 7 then
@@ -465,7 +488,7 @@ for each player do
                current_player.biped.add_weapon(magnum, force)
             end
             if current_player.number[4] == 3 then
-               current_player.biped.add_weapon(rocket_launcher, force)
+               current_player.biped.add_weapon(grenade_launcher, force)
             end
             if current_player.number[4] == 4 then
                current_player.biped.add_weapon(spartan_laser, force)
@@ -474,7 +497,7 @@ for each player do
                current_player.biped.add_weapon(fuel_rod_gun, force)
             end
             if current_player.number[4] == 6 then
-               current_player.biped.add_weapon(grenade_launcher, force)
+               current_player.biped.add_weapon(rocket_launcher, force)
             end
          end
          if script_option[9] >= 9 then
@@ -494,7 +517,7 @@ for each player do
                current_player.biped.add_weapon(magnum, force)
             end
             if current_player.number[4] == 5 then
-               current_player.biped.add_weapon(rocket_launcher, force)
+               current_player.biped.add_weapon(grenade_launcher, force)
             end
             if current_player.number[4] == 6 then
                current_player.biped.add_weapon(spartan_laser, force)
@@ -503,9 +526,29 @@ for each player do
                current_player.biped.add_weapon(fuel_rod_gun, force)
             end
             if current_player.number[4] >= 8 then
-               current_player.biped.add_weapon(grenade_launcher, force)
+               current_player.biped.add_weapon(rocket_launcher, force)
             end
          end
+      end
+   end
+end
+
+for each player do
+   if script_option[7] != 0 and current_player.team == 0 then
+      global.object[9] = current_player.get_weapon(primary)
+      if script_option[7] == 1 or script_option[7] == -1 then
+         if global.object[9].is_of_type(focus_rifle) then
+            current_player.apply_traits(script_traits[4])
+         end
+         if global.object[9].is_of_type(rocket_launcher) or global.object[9].is_of_type(spartan_laser) or global.object[9].is_of_type(fuel_rod_gun) or global.object[9].is_of_type(grenade_launcher) or global.object[9].is_of_type(concussion_rifle) then
+            current_player.apply_traits(script_traits[5])
+         end
+      end
+      if script_option[7] == 2 or script_option[7] == -2 then
+         current_player.apply_traits(script_traits[5])
+      end
+      if script_option[7] < 0 then
+         current_player.apply_traits(script_traits[3])
       end
    end
 end
@@ -535,47 +578,35 @@ for each player do
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) then 
       if current_player.killer_type_is(kill) then 
          global.player[0] = current_player.try_get_killer()
-         global.player[0].score += script_option[0]
-         global.number[2] = script_option[0]
+         global.player[0].score += script_option[1]
+         global.number[2] = script_option[1]
          if global.number[2] != 0 then
             game.show_message_to(current_player, none, "+%n", global.number[2])
-            send_incident(respawn_tick_final, current_player, no_player)
          end
          global.number[4] = current_player.try_get_death_damage_mod()
          global.number[1] = global.player[0].get_spree_count()
          do
             global.number[1] %= 5
             if global.number[1] == 0 then 
-               global.player[0].score += script_option[2]
-               global.number[2] = script_option[2]
+               global.player[0].score += script_option[3]
+               global.number[2] = script_option[3]
                if global.number[2] != 0 then
                   game.show_message_to(current_player, none, "+%n", global.number[2])
-                  send_incident(respawn_tick_final, current_player, no_player)
                end
             end
          end
          if current_player.number[0] == 1 then 
-            global.player[0].score += script_option[3]
-            global.number[2] = script_option[3]
+            global.player[0].score += script_option[0]
+            global.number[2] = script_option[0]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
-               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
-         if global.number[4] == 3 then 
+         if global.number[4] == 3 or global.number[4] == 4 then 
             global.player[0].score += script_option[5]
             global.number[2] = script_option[5]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
-               send_incident(respawn_tick_final, current_player, no_player)
-            end
-         end
-         if global.number[4] == 4 then 
-            global.player[0].score += script_option[6]
-            global.number[2] = script_option[6]
-            if global.number[2] != 0 then
-               game.show_message_to(current_player, none, "+%n", global.number[2])
-               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
          if global.number[4] == 5 then 
@@ -583,7 +614,6 @@ for each player do
             global.number[2] = script_option[4]
             if global.number[2] != 0 then
                game.show_message_to(current_player, none, "+%n", global.number[2])
-               send_incident(respawn_tick_final, current_player, no_player)
             end
          end
       end
@@ -595,7 +625,6 @@ on object death: do
       if killer_player != killed_object.player[0] then
          killer_player.score += killed_object.number[0]
          game.show_message_to(killer_player, none, "+%n", killed_object.number[0])
-         send_incident(respawn_tick_final, current_player, no_player)
       end
       global.player[0] = no_player
       global.player[0] = killed_object.player[0]
@@ -608,25 +637,13 @@ end
 
 for each player do
    if current_player.killer_type_is(guardians | suicide | kill | betrayal | quit) and not current_player.killer_type_is(kill) and not current_player.killer_type_is(betrayal) then 
-      current_player.score += script_option[1]
+      current_player.score += script_option[2]
    end
 end
 
 for each player do
    if current_player.number[0] == 1 then 
       current_player.apply_traits(script_traits[0])
-   end
-end
-
-for each object do
-   if not current_object.is_of_type(spartan) and not current_object.is_of_type(elite) and not current_object.is_of_type(monitor) and current_object.team == team[7] then 
-      current_object.set_invincibility(1)
-   end
-end
-
-for each player do
-   if script_option[15] == 1 then 
-      current_player.set_co_op_spawning(true)
    end
 end
 
@@ -841,18 +858,6 @@ for each object with label "spawner" do
                current_object.set_invincibility(0)
             end
          end
-      end
-   end
-end
-
-for each object with label "bro_spawn_loc" do
-   current_object.set_invincibility(1)
-   current_object.set_pickup_permissions(no_one)
-   current_object.set_spawn_location_fireteams(all)
-   current_object.set_spawn_location_permissions(allies)
-   for each player do
-      if current_object.team == current_player.team or current_object.team == neutral_team then 
-         current_player.set_primary_respawn_object(current_object)
       end
    end
 end
