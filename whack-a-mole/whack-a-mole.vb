@@ -331,10 +331,16 @@ end
 for each player do
    current_player.timer[0].set_rate(-100%)
    if current_player.timer[0].is_zero() then
-      script_widget[3].set_text("HUNTER")
+      if current_player.number[2] == 0 then
+         script_widget[3].set_text("HUNTER")
+      end
+      if current_player.number[2] == 1 then
+         script_widget[3].set_text("MOLE")
+      end
       script_widget[0].set_visibility(current_player, false)
       script_widget[1].set_visibility(current_player, false)
       script_widget[2].set_visibility(current_player, false)
+      script_widget[3].set_visibility(current_player, true)
       global.number[2] = script_option[8]
       if global.number[2] > 0 then
          script_widget[2].set_visibility(current_player, true)
@@ -357,7 +363,7 @@ for each player do
    if current_player.number[1] == 1 and current_player.timer[0].is_zero() then
       game.show_message_to(current_player, none, "AnvilEditor  -  Weesee!")
       game.show_message_to(current_player, none, "Concept  -  Sofasleeper5")
-      game.show_message_to(current_player, none, "Whack-A-Mole  (v1.0)  -  Created by mini nt")
+      game.show_message_to(current_player, none, "Whack-A-Mole  (v1.01)  -  Created by mini nt")
       global.timer[1].set_rate(-100%)
       script_widget[3].set_visibility(current_player, true)
       if current_player.number[2] == 0 then
