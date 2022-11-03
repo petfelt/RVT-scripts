@@ -306,10 +306,12 @@ if game.teams_enabled == 0 then
             current_player.timer[0].reset()
             if current_object.spawn_sequence != 0 then
                current_player.number[2] = 1
+               script_widget[0].set_visibility(current_player, false)
                script_widget[1].set_visibility(current_player, true)
             end
             if current_object.spawn_sequence == 0 then
                current_player.number[2] = 0
+               script_widget[1].set_visibility(current_player, false)
                script_widget[0].set_visibility(current_player, true)
             end
             send_incident(suicide, current_player, no_player)
@@ -331,24 +333,25 @@ end
 for each player do
    current_player.timer[0].set_rate(-100%)
    if current_player.timer[0].is_zero() then
-      if current_player.number[2] == 0 then
-         script_widget[3].set_text("HUNTER")
-      end
-      if current_player.number[2] == 1 then
-         script_widget[3].set_text("MOLE")
-      end
-      script_widget[0].set_visibility(current_player, false)
-      script_widget[1].set_visibility(current_player, false)
+      script_widget[0].set_value_text("")
+      script_widget[1].set_value_text("")
       script_widget[2].set_visibility(current_player, false)
-      script_widget[3].set_visibility(current_player, true)
       global.number[2] = script_option[8]
       if global.number[2] > 0 then
          script_widget[2].set_visibility(current_player, true)
       end
    end
    if current_player.number[1] == 0 and current_player.timer[0].is_zero() then 
-      script_widget[0].set_text("You are a HUNTER: Shoot the moles!")
-      script_widget[1].set_text("You are a MOLE: Jump and avoid gunfire!")
+      if current_player.number[2] == 0 then
+         script_widget[0].set_visibility(current_player, true)
+      end
+      if current_player.number[2] != 0 then
+         script_widget[1].set_visibility(current_player, true)
+      end
+      script_widget[0].set_text("HUNTER")
+      script_widget[0].set_value_text("Shoot the moles!")
+      script_widget[1].set_text("MOLE")
+      script_widget[1].set_value_text("Jump and avoid gunfire!")
       if game.teams_enabled == 0 then
          current_player.team = team[0]
          current_player.number[2] = 0
@@ -363,16 +366,17 @@ for each player do
    if current_player.number[1] == 1 and current_player.timer[0].is_zero() then
       game.show_message_to(current_player, none, "AnvilEditor  -  Weesee!")
       game.show_message_to(current_player, none, "Concept  -  Sofasleeper5")
-      game.show_message_to(current_player, none, "Whack-A-Mole  (v1.01)  -  Created by mini nt")
+      game.show_message_to(current_player, none, "Whack-A-Mole  (v1.02)  -  Created by mini nt")
       global.timer[1].set_rate(-100%)
-      script_widget[3].set_visibility(current_player, true)
       if current_player.number[2] == 0 then
+         script_widget[0].set_value_text("Shoot the moles!")
+         script_widget[1].set_visibility(current_player, false)
          script_widget[0].set_visibility(current_player, true)
-         script_widget[3].set_text("HUNTER")
       end
       if current_player.number[2] != 0 then
+         script_widget[1].set_value_text("Jump and avoid gunfire!")
+         script_widget[0].set_visibility(current_player, false)
          script_widget[1].set_visibility(current_player, true)
-         script_widget[3].set_text("MOLE")
       end
       current_player.number[1] = 2
       current_player.timer[0].reset()
