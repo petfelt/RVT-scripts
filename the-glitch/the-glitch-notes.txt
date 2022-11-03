@@ -1,0 +1,15 @@
+The Glitch Notes
+
+Other gamemode notes:
+
+Depth Chargers:
+ - Check player's team more often to make sure local code FX are only for humans.
+ - Increase damage of grenade turrets?
+
+Whack-a-Mole:
+ - Make sure players have a score counter above them
+
+Bomber Zombies:
+ - Increase normal player speed by 10% (DONE)
+ - Lower last man speed by 10% (DONE)
+ - Investigate scoring not working for zombies
