@@ -1,9 +1,11 @@
 The Glitch Notes
+ - Might need to make it host-only, using client detection technique.
+ - won't work on CGB. Rip.
 
 Other gamemode notes:
 
 Depth Chargers:
- - Check player's team more often to make sure local code FX are only for humans.
+ - Check player's team more often to make sure local code FX are only for humans. (Who knows...)
  - Increase damage of grenade turrets?
 
 Whack-a-Mole:
@@ -12,4 +14,4 @@ Whack-a-Mole:
 Bomber Zombies:
  - Increase normal player speed by 10% (DONE)
  - Lower last man speed by 10% (DONE)
- - Investigate scoring not working for zombies
+ - Investigate scoring not working for zombies (maybe fixed?)
