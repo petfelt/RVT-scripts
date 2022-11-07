@@ -1,0 +1,13 @@
+global.number[4]: Keeps track of if there is a hostage
+
+player.number[2]: 0: Not hostage   1: hostage
+
+player.timer[1]: show timer
+
+global.player[1]: hostage player
+
+
+ - Heal within drop shield as hostage player
+ - Try and remove assassination as hostage
+
+Fix hostage - remove weapons and grenades
