@@ -217,7 +217,7 @@ end
 for each player do
    if current_player.number[3] == 0 and current_player.timer[1].is_zero() then 
       send_incident(infection_game_start, current_player, no_player)
-      game.show_message_to(current_player, none, "Created by mini nt - v0.95       (Anvil V1.05a)")
+      game.show_message_to(current_player, none, "Created by mini nt - v0.97       (Anvil V1.05a)")
       game.show_message_to(current_player, none, "Depth Chargers")
       current_player.number[3] = 1
    end
@@ -846,13 +846,11 @@ on local: do
       end
 	end
    for each player do
-      if current_player.number[0] == 1 then
-         if script_option[14] == 1 or script_option[14] == 3 then
-            if current_player.object[0] != no_object then
-               current_player.object[0].delete()
-               current_player.object[1].delete()
-               current_player.object[2].delete()
-            end
+      if script_option[14] == 1 or script_option[14] == 3 then
+         if current_player.number[0] == 1 then
+            current_player.object[0].delete()
+            current_player.object[1].delete()
+            current_player.object[2].delete()
          end
       end
    end
