@@ -1,0 +1,36 @@
+Grenade ability script variables:
+global.number[5]
+global.number[6]
+global.object[2]
+global.object[3] - only if we want to throw something different
+global.object[4] - player.biped
+global.player[2] - player
+player.number[2] - set to 1, so player can change abilities.
+
+Player swap abilities variables:
+global.object[4] - current_player.get_armor_ability()
+player.number[3] - used for number of iFrames in evade
+
+
+TO ADD:
+
+ - Make two new script options do things.
+   - turn off unlimited sprint
+   - determine number of frames to be invincible for
+ - Tell player when they are invincible. (Maybe number of iframes told on HUD?)
+
+
+
+POSSIBLY:
+
+ - Make new mode where you t-bag to change abilities, use all abilities?
+
+Abilities:
+
+ - Active Camo
+ - Armor Lock
+ - Sprint
+ - Evade
+ - Drop Shield
+ - Jetpack
+ - Hologram
