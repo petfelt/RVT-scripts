@@ -1,0 +1,11 @@
+Swapped from grenade ability trigger script. Now using crouch twice ability trigger script.
+
+Abilities Order:
+
+ - Active Camo - 0
+ - Armor Lock - 1
+ - Sprint - 2
+ - Hologram - 3
+ - Drop Shield - 4
+ - Jetpack - 5
+ - Evade - 6
