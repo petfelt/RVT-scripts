@@ -13,13 +13,17 @@ declare global.player[0] with network priority local
 declare global.player[1] with network priority local
 declare global.player[2] with network priority low
 declare global.team[0] with network priority local
+declare global.timer[0] = script_option[10]
+declare global.timer[1] = script_option[11]
 declare player.number[0] with network priority low
 declare player.number[1] with network priority low
 declare player.number[2] with network priority low
 declare player.number[3] with network priority low
-declare player.timer[3] = 3
-declare player.timer[1] = 1
-declare player.timer[2] = 5
+declare player.number[4] with network priority low
+declare player.number[5] with network priority low
+declare player.timer[1] = 10
+declare player.timer[2] = 2
+declare player.timer[3] = 1
 declare object.number[0] with network priority low
 declare object.number[1] with network priority low = 1
 declare object.number[2] with network priority local
@@ -53,7 +57,6 @@ for each player do
 end
 
 for each player do
-   current_player.timer[2].set_rate(-100%)
    if script_option[2] == 1 and current_player.team == team[1] then 
       current_player.set_round_card_title("Capture the enemy flag.\r\n%n rounds.", game.round_limit)
       current_player.set_round_card_text("Offense")
@@ -72,15 +75,37 @@ for each player do
    end
 end
 
+if script_option[11] != -1 and global.timer[1].is_zero() then
+   for each player do
+      game.show_message_to(current_player, none, "Evade has some invincibility frames; use them wisely")
+      game.show_message_to(current_player, none, "Crouch 4 times to swap abilities")
+   end
+   global.timer[1].reset()
+end
+
+if global.timer[0].is_zero() then
+   for each player do
+      if script_option[10] != -1 then
+         current_player.plasma_grenades += 1
+      end
+   end
+   global.timer[0].reset()
+end
+
 for each player do
+   global.timer[0].set_rate(-100%)
+   global.timer[1].set_rate(-100%)
    script_widget[0].set_text("Your flag must be at home to score!")
    script_widget[0].set_visibility(current_player, false)
-   script_widget[1].set_text("iFrames: %n", script_option[9])
-   script_widget[1].set_visibility(current_player, false)
-   script_widget[2].set_text("NOT ACTIVE")
+   script_widget[1].set_visibility(current_player, true)
+   script_widget[2].set_text("iFrames: %n", script_option[9])
    script_widget[2].set_visibility(current_player, false)
    script_widget[3].set_text(">>INVINCIBLE<<")
    script_widget[3].set_visibility(current_player, false)
+   if current_player.number[0] == 0 then
+      script_widget[1].set_meter_params(timer, hud_player.timer[1])
+      current_player.timer[1].set_rate(-500%)
+   end
    if current_player.number[0] == 0 and current_player.timer[2].is_zero() then 
       game.show_message_to(current_player, none, "(v1.0)  -  Rolls added by mini nt")
       game.show_message_to(current_player, announce_ctf, "Castle Wars: Dark Souls")
@@ -101,59 +126,133 @@ for each player do
    end
 end
 
-for each object with label 6 do
-   global.number[5] = 0
-   global.number[5] = current_object.health
-   if global.number[5] == 100 then
-      global.object[2] = current_object
-      for each object do
-         if current_object == global.object[2] then
-            global.number[5] = -1
+on local: do
+   for each player do
+      global.object[3] = current_player.get_armor_ability()
+      if global.object[3].is_of_type(armor_lock) and global.object[3].is_in_use() then
+         current_player.number[4] = 9
+      end
+      if global.object[3].is_of_type(evade) and global.object[3].is_in_use() then
+         current_player.number[4] = 9
+      end
+      if global.object[3].is_of_type(drop_shield) and global.object[3].is_in_use() then
+         current_player.number[4] = 9
+      end
+   end
+
+   for each player do
+      current_player.timer[2].set_rate(-100%)
+      global.number[5] = 0
+      global.object[3] = current_player.biped
+      global.object[2] = current_player.biped.place_at_me(hill_marker, none, none, 0, 0, 1, none)
+      global.object[2].attach_to(global.object[3], 0, 0, 0, relative)
+      global.object[2].detach()
+      global.number[5] = current_player.biped.get_distance_to(global.object[2])
+      global.object[2].delete()
+      if current_player.is_spartan() then 
+         if global.number[5] <= 2 and current_player.number[4] == 0 then 
+            current_player.number[4] = 1
+            current_player.timer[2].reset()
+         end
+         if global.number[5] >= 3 and current_player.number[4] == 1 then 
+            current_player.number[4] = 2
+            current_player.timer[2].reset()
+         end
+         if global.number[5] <= 2 and current_player.number[4] == 2 then 
+            current_player.number[4] = 3
+            current_player.timer[2].reset()
+         end
+         if global.number[5] >= 3 and current_player.number[4] == 3 then 
+            current_player.number[4] = 4
+            current_player.timer[2].reset()
+         end
+         if global.number[5] <= 2 and current_player.number[4] == 4 then 
+            current_player.number[4] = 5
+            current_player.timer[2].reset()
+         end
+         if global.number[5] >= 3 and current_player.number[4] == 5 then 
+            current_player.number[4] = 6
+            current_player.timer[2].reset()
+         end
+         if global.number[5] <= 2 and current_player.number[4] == 6 then 
+            current_player.number[4] = 7
+            current_player.timer[2].reset()
+         end
+         if global.number[5] >= 3 and current_player.number[4] == 7 then 
+            current_player.number[4] = 8
+            current_player.timer[2].reset()
          end
       end
-      if global.number[5] == 100 then
-         global.number[6] = -2
-         for each object do
-            if global.number[6] != 0 and current_object.is_of_type(spartan) or current_object.is_of_type(elite) then
-               global.number[6] = current_object.get_distance_to(global.object[2])
-               global.object[4] = current_object
-            end
+      if current_player.is_elite() then 
+         if global.number[5] >= 4 and current_player.number[4] == 7 then 
+            current_player.number[4] = 8
+            current_player.timer[2].reset()
          end
-         if global.number[6] != 0 then
-            if global.object[4].player[0] != no_player then
-               global.player[2] = global.object[4].player[0]
-               global.player[2].number[2] = 1
-            end
-            current_object.delete()
+         if global.number[5] <= 3 and current_player.number[4] == 6 then 
+            current_player.number[4] = 7
+            current_player.timer[2].reset()
          end
+         if global.number[5] >= 4 and current_player.number[4] == 5 then 
+            current_player.number[4] = 6
+            current_player.timer[2].reset()
+         end
+         if global.number[5] <= 3 and current_player.number[4] == 4 then 
+            current_player.number[4] = 5
+            current_player.timer[2].reset()
+         end
+         if global.number[5] >= 4 and current_player.number[4] == 3 then 
+            current_player.number[4] = 4
+            current_player.timer[2].reset()
+         end
+         if global.number[5] <= 3 and current_player.number[4] == 2 then 
+            current_player.number[4] = 3
+            current_player.timer[2].reset()
+         end
+         if global.number[5] >= 4 and current_player.number[4] == 1 then 
+            current_player.number[4] = 2
+            current_player.timer[2].reset()
+         end
+         if global.number[5] <= 3 and current_player.number[4] == 0 then 
+            current_player.number[4] = 1
+            current_player.timer[2].reset()
+         end
+      end
+      if current_player.timer[1].is_zero() and current_player.timer[2].is_zero() then 
+         current_player.number[4] = 0
+         current_player.number[5] = 0
       end
    end
 end
 
 for each player do
    global.object[4] = current_player.get_armor_ability()
-   if current_player.number[2] == 1 then
-      if global.object[4].is_of_type(sprint) then
-         global.object[4].delete()
-         global.object[3] = current_player.biped.place_at_me(evade, none, none, 0, 0, 1, none)
-         global.object[3].attach_to(current_player.biped, 0, 0, 1, relative)
-         global.object[3].detach()
-         current_player.number[2] = 0
-      end
-   end
-   if current_player.number[2] == 1 then
+
+   if current_player.number[4] == 8 and current_player.number[5] == 0 then
       if global.object[4].is_of_type(evade) then
-         global.object[4].delete()
          global.object[3] = current_player.biped.place_at_me(sprint, none, none, 0, 0, 1, none)
-         global.object[3].attach_to(current_player.biped, 0, 0, 1, relative)
-         global.object[3].detach()
-         current_player.number[2] = 0
+         game.show_message_to(current_player, none, "Sprint equipped")
       end
+      if global.object[4].is_of_type(sprint) then
+         global.object[3] = current_player.biped.place_at_me(evade, none, none, 0, 0, 1, none)
+         game.show_message_to(current_player, none, "Evade equipped")
+      end
+      global.object[4].delete()
+      global.object[3].attach_to(current_player.biped, 0, 0, 1, relative)
+      global.object[3].detach()
+      current_player.number[4] = 9
+      current_player.number[5] = 1
+      current_player.timer[1].reset()
+      current_player.timer[1].set_rate(-500%)
+      current_player.timer[3].reset()
+      current_player.timer[3].set_rate(-200%)
    end
    global.object[4] = current_player.get_armor_ability()
    if global.object[4].is_of_type(evade) then
+      if script_option[7] == 1 and not current_player.timer[3].is_zero() then
+         current_player.timer[3].set_rate(-200%)
+         current_player.apply_traits(script_traits[3])
+      end
       if script_option[8] == 1 then
-         script_widget[1].set_visibility(current_player, true)
          if global.object[4].is_in_use() then
             if current_player.number[3] <= script_option[9] then
                script_widget[2].set_visibility(current_player, false)
@@ -166,26 +265,29 @@ for each player do
                script_widget[3].set_visibility(current_player, false)
             end
          end
-         if not global.object[4].is_in_use() then
-            script_widget[2].set_visibility(current_player, true)
-            script_widget[3].set_visibility(current_player, false)
-            current_player.number[3] = 0
+         if script_option[7] == 1 then
+            if not global.object[4].is_in_use() and current_player.timer[3].is_zero() then
+               script_widget[2].set_visibility(current_player, true)
+               script_widget[3].set_visibility(current_player, false)
+               current_player.number[3] = 0
+            end
+         end
+         if script_option[7] != 1 then
+            if not global.object[4].is_in_use() then
+               script_widget[2].set_visibility(current_player, true)
+               script_widget[3].set_visibility(current_player, false)
+               current_player.number[3] = 0
+            end
          end
       end
    end
-   if global.object[4].is_of_type(sprint) and script_option[7] == 1 then
+   if global.object[4].is_of_type(sprint) then
       script_widget[2].set_visibility(current_player, false)
       script_widget[3].set_visibility(current_player, false)
-      current_player.apply_traits(script_traits[3])
+      if script_option[7] == 1 then
+         current_player.apply_traits(script_traits[3])
+      end
    end
-end
-
-for each player do
-   current_player.timer[3].set_rate(-100%)
-   if current_player.timer[3].is_zero() then
-      current_player.plasma_grenades += 1
-      current_player.timer[3].reset()
-   end 
 end
 
 for each team do
@@ -279,11 +381,6 @@ for each team do
    if not global.player[1] == no_player then 
       global.object[0].player[0] = global.player[1]
       global.player[1].apply_traits(script_traits[0])
-      global.player[1].timer[1].set_rate(-100%)
-      if global.player[1].timer[1].is_zero() then 
-         global.player[1].script_stat[1] += 1
-         global.player[1].timer[1].reset()
-      end
    end
    if not global.player[1] == no_player then 
       global.object[0].set_waypoint_visibility(no_one)

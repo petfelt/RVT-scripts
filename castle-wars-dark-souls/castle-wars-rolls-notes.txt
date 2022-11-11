@@ -12,6 +12,8 @@ global.object[4] - current_player.get_armor_ability()
 player.number[3] - used for number of iFrames in evade
 
 
+CHANGE FROM GRENADES TO CROUCH!!
+
 TO ADD:
 
  - Make two new script options do things.
