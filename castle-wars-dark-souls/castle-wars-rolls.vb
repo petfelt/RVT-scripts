@@ -13,7 +13,6 @@ declare global.player[0] with network priority local
 declare global.player[1] with network priority local
 declare global.player[2] with network priority low
 declare global.team[0] with network priority local
-declare global.timer[0] = script_option[10]
 declare global.timer[1] = script_option[11]
 declare player.number[0] with network priority low
 declare player.number[1] with network priority low
@@ -21,9 +20,11 @@ declare player.number[2] with network priority low
 declare player.number[3] with network priority low
 declare player.number[4] with network priority low
 declare player.number[5] with network priority low
+declare player.number[6] with network priority low
+declare player.timer[0] = script_option[10]
 declare player.timer[1] = 10
 declare player.timer[2] = 2
-declare player.timer[3] = 1
+declare player.timer[3] = 2
 declare object.number[0] with network priority low
 declare object.number[1] with network priority low = 1
 declare object.number[2] with network priority local
@@ -83,17 +84,20 @@ if script_option[11] != -1 and global.timer[1].is_zero() then
    global.timer[1].reset()
 end
 
-if global.timer[0].is_zero() then
-   for each player do
-      if script_option[10] != -1 then
-         current_player.plasma_grenades += 1
-      end
-   end
-   global.timer[0].reset()
-end
 
 for each player do
-   global.timer[0].set_rate(-100%)
+   current_player.timer[0].set_rate(-100%)
+   if script_option[10] != -1 then
+      if current_player.timer[0].is_zero() then
+         current_player.plasma_grenades += 1
+         current_player.timer[0].reset()
+      end
+   end
+end
+
+
+
+for each player do
    global.timer[1].set_rate(-100%)
    script_widget[0].set_text("Your flag must be at home to score!")
    script_widget[0].set_visibility(current_player, false)
@@ -107,6 +111,9 @@ for each player do
       current_player.timer[1].set_rate(-500%)
    end
    if current_player.number[0] == 0 and current_player.timer[2].is_zero() then 
+      global.number[6] = script_option[4]
+      global.number[6] *= 60
+      current_player.number[6] = -1
       game.show_message_to(current_player, none, "(v1.0)  -  Rolls added by mini nt")
       game.show_message_to(current_player, announce_ctf, "Castle Wars: Dark Souls")
       current_player.number[0] = 1
@@ -249,7 +256,7 @@ for each player do
    global.object[4] = current_player.get_armor_ability()
    if global.object[4].is_of_type(evade) then
       if script_option[7] == 1 and not current_player.timer[3].is_zero() then
-         current_player.timer[3].set_rate(-200%)
+         current_player.timer[3].set_rate(-300%)
          current_player.apply_traits(script_traits[3])
       end
       if script_option[8] == 1 then
@@ -390,7 +397,6 @@ for each team do
       global.object[0].timer[1] = script_option[0]
       global.object[0].set_progress_bar(0, no_one)
       global.number[0] = 1
-      global.player[1].timer[0] = script_option[4]
       global.team[0] = global.player[1].team
       if global.team[0].object[0].shape_contains(global.player[1].biped) then 
          global.number[3] = 1
@@ -499,15 +505,27 @@ for each team do
    end
 end
 
+for each object with label 5 do
+   current_object.player[0] = no_player
+   current_object.player[0] = current_object.get_carrier()
+   if current_object.player[0] != no_player then
+      global.player[2] = current_object.player[0]
+      global.player[2].number[6] = 0
+   end
+end
+
 for each player do
    global.object[0] = current_player.biped
    if not global.object[0] == no_object then 
       global.object[1] = no_object
       global.object[1] = current_player.try_get_weapon(primary)
-      if not global.object[1].is_of_type(flag) and current_player.timer[0] > 0 then 
-         current_player.timer[0].set_rate(-100%)
-         if not current_player.timer[0].is_zero() then 
+      if not global.object[1].is_of_type(flag) and current_player.number[6] >= 0 then 
+         if current_player.number[6] <= global.number[6] then 
             current_player.apply_traits(script_traits[1])
+            current_player.number[6] += 1
+         end
+         if current_player.number[6] > global.number[6] then 
+            current_player.number[6] = -1
          end
       end
    end

@@ -1,3 +1,6 @@
+Gamemode done. Now uses crouch functionality.
+
+OLD INFO:
 Grenade ability script variables:
 global.number[5]
 global.number[6]
