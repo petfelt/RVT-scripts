@@ -25,8 +25,12 @@ declare player.number[1] with network priority low
 declare player.number[2] with network priority low
 declare player.object[0] with network priority low
 declare player.object[1] with network priority low
-declare object.object[0] with network priority low
 declare player.timer[0] = 5
+declare object.number[0] with network priority low
+declare object.number[1] with network priority low
+declare object.object[0] with network priority low
+declare object.object[1] with network priority low
+declare object.object[2] with network priority low
 
 if game.teams_enabled == 1 then 
    for each object with label "ffa_only" do
@@ -76,7 +80,7 @@ for each player do
       current_player.number[1] = 1
       current_player.timer[0].reset()
    end
-   if current_player.number[1] == 1 and current_player.timer[0].is_zero() then
+   if current_player.number[1] == 1 and current_player.timer[0].is_zero() then 
       game.show_message_to(current_player, none, "(v1.00)  -  Created by mini nt")
       current_player.number[1] = 2
    end
@@ -107,20 +111,22 @@ for each player do
    if current_player.number[2] == 1 then 
       global.player[1] = current_player
       current_player.apply_traits(script_traits[1])
-      global.object[1] = current_player.get_weapon(primary)
-      if global.object[1] != no_object then
+      global.object[1] = no_object
+      global.object[1] = current_player.try_get_weapon(primary)
+      if global.object[1] != no_object then 
          current_player.biped.remove_weapon(primary, false)
          current_player.frag_grenades -= 4
          current_player.plasma_grenades -= 4
       end
-      global.object[0] = current_player.get_armor_ability()
-      if not global.object[0].is_of_type(sprint) and global.object[0] != no_object then
+      global.object[0] = no_object
+      global.object[0] = current_player.try_get_armor_ability()
+      if not global.object[0].is_of_type(sprint) and global.object[0] != no_object then 
          global.object[0].delete()
          global.object[3] = current_player.biped.place_at_me(sprint, none, none, 0, 0, 1, none)
          global.object[3].attach_to(current_player.biped, 0, 0, 1, relative)
          global.object[3].detach()
       end
-      if global.object[0].is_of_type(sprint) then
+      if global.object[0].is_of_type(sprint) then 
          current_player.apply_traits(script_traits[3])
       end
       script_widget[1].set_text("You are the Hostage")
@@ -132,27 +138,26 @@ for each player do
       script_widget[1].set_visibility(current_player, false)
       script_widget[2].set_visibility(current_player, true)
    end
-   if global.number[4] == 0 then
+   if global.number[4] == 0 then 
       script_widget[1].set_visibility(current_player, false)
       script_widget[2].set_visibility(current_player, false)
    end
 end
 
-
 for each object with label "Hostage_Select" do
-   if current_object.number[0] == 0 then
+   if current_object.number[0] == 0 then 
       current_object.set_waypoint_icon(vip)
-      current_object.set_waypoint_range(0,100)
+      current_object.set_waypoint_range(0, 100)
       current_object.set_waypoint_text("BE THE HOSTAGE")
       current_object.set_waypoint_visibility(everyone)
       current_object.set_shape_visibility(everyone)
       current_object.number[0] = 1
    end
-   if global.number[4] == 1 then
+   if global.number[4] == 1 then 
       current_object.set_waypoint_visibility(no_one)
       current_object.set_shape_visibility(no_one)
    end
-   if global.number[4] == 0 then
+   if global.number[4] == 0 then 
       current_object.set_waypoint_visibility(everyone)
       current_object.set_shape_visibility(everyone)
    end
@@ -277,8 +282,8 @@ end
 for each player do
    global.object[2] = no_object
    global.object[2] = current_player.try_get_armor_ability()
-   if global.object[2].is_of_type(drop_shield) then
-      if not global.object[2].is_in_use() and global.object[2].number[3] < 3 then
+   if global.object[2].is_of_type(drop_shield) then 
+      if not global.object[2].is_in_use() and global.object[2].number[3] < 3 then 
          global.object[2].number[3] += 1
          for each object do
             global.number[7] = current_object.get_distance_to(global.object[2])
@@ -293,27 +298,53 @@ for each player do
             end
          end
       end
-      if global.object[2].is_in_use() then
+      if global.object[2].is_in_use() then 
          global.object[2].number[3] = 0
       end
    end
 end
 
 for each player do
-   if current_player.object[1] != no_object then
+   if current_player.object[1] != no_object then 
       global.object[3] = current_player.object[1]
       for each player do
-         if global.object[3].shape_contains(current_player.biped) then
-            if current_player.number[2] == 1 then
-               current_player.apply_traits(script_traits[2])
-            end
+         if global.object[3].shape_contains(current_player.biped) and current_player.number[2] == 1 then 
+            current_player.apply_traits(script_traits[2])
          end
+      end
+   end
+end
+
+for each object with label "Falcon_Plus" do
+   if current_object.number[1] == 0 then
+      global.object[0] = current_object.place_at_me(mongoose, none, never_garbage_collect, 0, 0, 1, none)
+      global.object[0].attach_to(current_object, 0, 10, 1, relative)
+      current_object.object[1] = global.object[0]
+      global.object[0] = current_object.place_at_me(mongoose, none, never_garbage_collect, 0, 0, 1, none)
+      global.object[0].attach_to(current_object, 0, -10, 1, relative)
+      current_object.object[2] = global.object[0]
+      current_object.number[1] = 1
+   end
+   if current_object.number[1] == 1 then
+      current_object.object[1].detach()
+      current_object.object[2].detach()
+      global.number[3] = current_object.get_distance_to(current_object.object[1])
+      if global.number[3] > 20 then
+         current_object.object[1].copy_rotation_from(current_object, true)
+         current_object.object[1].attach_to(current_object, 0, 10, 1, relative)
+      end
+      global.number[3] = current_object.get_distance_to(current_object.object[2])
+      if global.number[3] > 20 then
+         current_object.object[2].copy_rotation_from(current_object, true)
+         current_object.object[2].attach_to(current_object, 0, -10, 1, relative)
       end
    end
 end
 
 on object death: do
    current_object.object[0].delete()
+   current_object.object[1].delete()
+   current_object.object[2].delete()
 end
 
 if game.round_time_limit > 0 and game.round_timer.is_zero() then 
