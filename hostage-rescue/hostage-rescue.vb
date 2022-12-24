@@ -28,6 +28,7 @@ declare player.object[1] with network priority low
 declare player.timer[0] = 5
 declare object.number[0] with network priority low
 declare object.number[1] with network priority low
+declare object.number[2] with network priority low
 declare object.object[0] with network priority low
 declare object.object[1] with network priority low
 declare object.object[2] with network priority low
@@ -318,25 +319,37 @@ end
 for each object with label "Falcon_Plus" do
    if current_object.number[1] == 0 then
       global.object[0] = current_object.place_at_me(mongoose, none, never_garbage_collect, 0, 0, 1, none)
-      global.object[0].attach_to(current_object, 0, 10, 1, relative)
+      global.object[0].attach_to(current_object, 0, 7, 1, relative)
       current_object.object[1] = global.object[0]
       global.object[0] = current_object.place_at_me(mongoose, none, never_garbage_collect, 0, 0, 1, none)
-      global.object[0].attach_to(current_object, 0, -10, 1, relative)
+      global.object[0].attach_to(current_object, 0, -7, 1, relative)
       current_object.object[2] = global.object[0]
       current_object.number[1] = 1
    end
    if current_object.number[1] == 1 then
-      current_object.object[1].detach()
-      current_object.object[2].detach()
+      current_object.number[2] = 0
+      for each player do
+         global.number[3] = current_object.get_distance_to(current_player.biped)
+         if global.number[3] < 20 then
+            global.object[0] = current_player.get_vehicle()
+            if global.object[0] == no_object then
+               current_object.number[2] += 1
+            end
+         end
+      end
+      if current_object.number[2] > 0 then
+         current_object.object[1].detach()
+         current_object.object[2].detach()
+      end
       global.number[3] = current_object.get_distance_to(current_object.object[1])
       if global.number[3] > 20 then
          current_object.object[1].copy_rotation_from(current_object, true)
-         current_object.object[1].attach_to(current_object, 0, 10, 1, relative)
+         current_object.object[1].attach_to(current_object, 0, 7, 1, relative)
       end
       global.number[3] = current_object.get_distance_to(current_object.object[2])
       if global.number[3] > 20 then
          current_object.object[2].copy_rotation_from(current_object, true)
-         current_object.object[2].attach_to(current_object, 0, -10, 1, relative)
+         current_object.object[2].attach_to(current_object, 0, -7, 1, relative)
       end
    end
 end
